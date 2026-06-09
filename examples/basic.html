@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Tienda con Whanda</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="../dist/whanda.min.js"></script>
+  <script src="../dist/whanda-plugins.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+  <nav class="bg-white shadow p-4">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold">Mi Tienda</h1>
+      <button onclick="openCart()" class="relative">
+        🛒 <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-4">
+    <!-- Barra de progreso envío gratis -->
+    <div id="shipping-bar" class="bg-blue-100 rounded-lg p-3 mb-4 hidden">
+      <p class="text-sm text-blue-800" id="shipping-text"></p>
+      <div class="w-full bg-blue-200 rounded-full h-2 mt-2">
+        <div id="shipping-progress" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Catálogo -->
+    <h2 class="text-lg font-bold mb-4">Productos</h2>
+    <div id="catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+  </div>
+
+  <!-- Carrito modal -->
+  <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-end sm:items-center justify-center">
+    <div class="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 max-h-[80vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold">Tu Carrito</h2>
+        <button onclick="closeCart()" class="text-gray-500 text-2xl">&times;</button>
+      </div>
+      <div id="cart-items"></div>
+      <div id="cart-empty" class="text-center text-gray-400 py-8 hidden">Tu carrito está vacío</div>
+      <div id="cart-footer" class="border-t mt-4 pt-4 hidden">
+        <div class="flex justify-between font-bold text-lg">
+          <span>Total:</span>
+          <span id="cart-total">$0</span>
+        </div>
+        <button onclick="checkout()" class="w-full bg-green-500 text-white py-3 rounded-lg mt-4 font-bold hover:bg-green-600">
+          Enviar por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Downsell popup -->
+  <div id="downsell-popup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-2xl p-6 max-w-sm mx-4 text-center">
+      <p id="downsell-message" class="text-lg font-bold mb-4"></p>
+      <div class="flex gap-2">
+        <button onclick="closeDownsell()" class="flex-1 bg-gray-200 py-2 rounded-lg">No, gracias</button>
+        <button onclick="applyDownsell()" class="flex-1 bg-green-500 text-white py-2 rounded-lg">¡Quiero el descuento!</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inicializar Whanda
+    const whanda = new Whanda({
+      whatsappNumber: "1234567890",
+      shipping: { type: "fixed", value: 200, freeFrom: 2000 }
+    });
+
+    // Configurar CRO
+    whanda.setCRO({
+      freeShippingBar: true,
+      freeShippingGoal: 2000,
+      lowStockAlert: true,
+      recentlyViewed: true
+    });
+
+    // Configurar downsell
+    whanda.setDownsell({
+      trigger: "cartEmpty",
+      type: "discount",
+      value: 10,
+      message: "¡Espera! Toma un 10% de descuento en tu próxima compra"
+    });
+
+    // Productos de ejemplo
+    whanda.setProducts([
+      { id: "1", name: "Camisa Clásica", price: 1200, stock: 25, category: "Ropa", image: "https://via.placeholder.com/300x200?text=Camisa" },
+      { id: "2", name: "Pantalón Slim", price: 2500, stock: 3, category: "Ropa", image: "https://via.placeholder.com/300x200?text=Pantalon" },
+      { id: "3", name: "Zapatos Casual", price: 3500, stock: 10, category: "Calzado", image: "https://via.placeholder.com/300x200?text=Zapatos" },
+      { id: "4", name: "Gorra Urban", price: 800, stock: 30, category: "Accesorios", image: "https://via.placeholder.com/300x200?text=Gorra" },
+      { id: "5", name: "Chaqueta Denim", price: 4500, stock: 2, category: "Ropa", image: "https://via.placeholder.com/300x200?text=Chaqueta" },
+      { id: "6", name: "Reloj Classic", price: 3200, stock: 8, category: "Accesorios", image: "https://via.placeholder.com/300x200?text=Reloj" }
+    ]);
+
+    // Configurar urgencia
+    whanda.setProductUrgency("2", { lowStock: 5, badge: "¡Últimas unidades!" });
+    whanda.setProductUrgency("5", { lowStock: 3, badge: "¡Solo quedan 2!" });
+
+    // Cupón
+    whanda.addCoupon({ code: "TIENDA10", amount: 10, type: "percent" });
+
+    // Renderizar catálogo
+    function renderCatalog() {
+      const catalog = document.getElementById("catalog");
+      catalog.innerHTML = whanda.getProducts().map(p => {
+        const urgency = whanda.getUrgency(p.id);
+        const badgeHtml = urgency && urgency.badge
+          ? `<span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">${urgency.badge}</span>`
+          : "";
+        return `
+          <div class="bg-white rounded-lg shadow overflow-hidden relative">
+            ${badgeHtml}
+            <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover">
+            <div class="p-4">
+              <h3 class="font-bold">${p.name}</h3>
+              <p class="text-gray-600">$${p.price.toLocaleString()}</p>
+              <p class="text-xs text-gray-400">Stock: ${p.stock}</p>
+              <button onclick="addToCart('${p.id}')" class="w-full bg-blue-500 text-white py-2 rounded mt-2 hover:bg-blue-600">
+                Agregar
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Agregar al carrito
+    async function addToCart(id) {
+      try {
+        await whanda.addItem(id);
+        updateCartUI();
+        openCart();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // Actualizar UI del carrito
+    function updateCartUI() {
+      const items = whanda.getCart();
+      const count = whanda.getCartItemCount();
+      document.getElementById("cart-count").textContent = count;
+
+      const cartItems = document.getElementById("cart-items");
+      const cartEmpty = document.getElementById("cart-empty");
+      const cartFooter = document.getElementById("cart-footer");
+
+      if (items.length === 0) {
+        cartItems.innerHTML = "";
+        cartEmpty.classList.remove("hidden");
+        cartFooter.classList.add("hidden");
+      } else {
+        cartEmpty.classList.add("hidden");
+        cartFooter.classList.remove("hidden");
+        cartItems.innerHTML = items.map(i => `
+          <div class="flex items-center gap-3 py-3 border-b">
+            <img src="${whanda.getProduct(i.productId).image}" class="w-12 h-12 object-cover rounded">
+            <div class="flex-1">
+              <p class="font-medium">${i.name}</p>
+              <p class="text-sm text-gray-500">$${i.price.toLocaleString()}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="updateQty('${i.productId}', ${i.quantity - 1})" class="w-7 h-7 bg-gray-200 rounded">-</button>
+              <span class="w-6 text-center">${i.quantity}</span>
+              <button onclick="updateQty('${i.productId}', ${i.quantity + 1})" class="w-7 h-7 bg-gray-200 rounded">+</button>
+            </div>
+          </div>
+        `).join("");
+        document.getElementById("cart-total").textContent = `$${whanda.getTotal().toLocaleString()}`;
+      }
+
+      updateShippingBar();
+    }
+
+    // Actualizar cantidad
+    function updateQty(id, qty) {
+      whanda.updateQuantity(id, qty);
+      updateCartUI();
+    }
+
+    // Barra de progreso de envío
+    function updateShippingBar() {
+      const bar = document.getElementById("shipping-bar");
+      const progress = whanda.checkFreeShippingProgress();
+      if (progress.goal > 0 && progress.current < progress.goal) {
+        bar.classList.remove("hidden");
+        document.getElementById("shipping-text").textContent =
+          `¡Faltan $${progress.remaining.toLocaleString()} para envío gratis!`;
+        document.getElementById("shipping-progress").style.width = `${progress.percentage}%`;
+      } else if (progress.goal > 0 && progress.current >= progress.goal) {
+        bar.classList.remove("hidden");
+        document.getElementById("shipping-text").textContent = "¡Tienes envío gratis!";
+        document.getElementById("shipping-progress").style.width = "100%";
+      } else {
+        bar.classList.add("hidden");
+      }
+    }
+
+    // Abrir/cerrar carrito
+    function openCart() { document.getElementById("cart-modal").classList.remove("hidden"); }
+    function closeCart() {
+      const items = whanda.getCart();
+      if (items.length === 0 && whanda.getDownsell()) {
+        showDownsell();
+      }
+      document.getElementById("cart-modal").classList.add("hidden");
+    }
+
+    // Downsell
+    function showDownsell() {
+      const ds = whanda.getDownsell();
+      if (ds) {
+        document.getElementById("downsell-message").textContent = ds.message;
+        document.getElementById("downsell-popup").classList.remove("hidden");
+      }
+    }
+    function closeDownsell() { document.getElementById("downsell-popup").classList.add("hidden"); }
+    function applyDownsell() {
+      const ds = whanda.getDownsell();
+      if (ds && ds.type === "discount") {
+        whanda.addCoupon({ code: "DOWNSell", amount: ds.value, type: "percent" });
+        whanda.applyCoupon("DOWNSell");
+      }
+      closeDownsell();
+    }
+
+    // Checkout
+    async function checkout() {
+      closeCart();
+      const name = prompt("Tu nombre:");
+      const address = prompt("Tu dirección:");
+      if (!name || !address) return;
+
+      whanda.setCustomerName(name);
+      whanda.setCustomerAddress(address);
+      whanda.setPaymentMethod("Efectivo");
+      whanda.setDeliveryMethod("Home Delivery");
+
+      try {
+        const order = await whanda.createOrder();
+        const link = await whanda.sendToWhatsApp(order);
+        window.open(link, "_blank");
+        updateCartUI();
+      } catch (e) {
+        alert(e.message);
+      }
+    }
+
+    // Inicializar
+    renderCatalog();
+    updateCartUI();
+  </script>
+</body>
+</html>

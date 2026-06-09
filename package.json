@@ -1,0 +1,24 @@
+{
+  "name": "whanda",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Headless Catalog + WhatsApp Checkout",
+  "main": "src/whanda.js",
+  "exports": {
+    ".": "./src/whanda.js",
+    "./sheets": "./src/whanda-sheets.js",
+    "./plugins": "./src/whanda-plugins.js",
+    "./extensions": "./src/whanda-extensions.js"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "node build.config.js",
+    "build:watch": "node build.config.js --watch"
+  },
+  "files": ["dist/", "src/"],
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "vitest": "^1.6.0"
+  }
+}
