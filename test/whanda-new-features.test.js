@@ -20,12 +20,12 @@ function createWhanda(config = {}) {
 describe("Security - load()", () => {
   it("should throw on invalid JSON", () => {
     const w = new Whanda();
-    expect(() => w.load("invalid json")).toThrow("Invalid JSON");
+    expect(() => w.load("invalid json")).toThrow("JSON inválido en load()");
   });
 
   it("should throw on non-object JSON", () => {
     const w = new Whanda();
-    expect(() => w.load('"string"')).toThrow("expects a JSON object");
+    expect(() => w.load('"string"')).toThrow("load() espera un objeto JSON");
   });
 
   it("should load valid JSON safely", () => {
@@ -115,7 +115,7 @@ describe("Multi-Currency", () => {
 
   it("should throw on unsupported currency", () => {
     const w = new Whanda({ currencies: { USD: 1 } });
-    expect(() => w.setCurrency("EUR")).toThrow("not supported");
+    expect(() => w.setCurrency("EUR")).toThrow("Moneda no soportada");
   });
 
   it("should allow any currency when no currencies config", () => {
@@ -175,7 +175,7 @@ describe("Multi-Region", () => {
 
   it("should throw on unsupported region", () => {
     const w = new Whanda({ regions: { DO: {} } });
-    expect(() => w.setRegion("US")).toThrow("not supported");
+    expect(() => w.setRegion("US")).toThrow("Región no soportada");
   });
 
   it("should auto-set currency when setting region", () => {

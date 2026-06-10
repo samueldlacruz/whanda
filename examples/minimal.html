@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Tienda</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f5f5f5; padding: 20px; }
+  .container { max-width: 600px; margin: 0 auto; }
+  h1 { text-align: center; margin-bottom: 20px; color: #333; }
+  .product { background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+  .product-info { flex: 1; }
+  .product-name { font-weight: 600; }
+  .product-price { color: #666; }
+  .product button { background: #25D366; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+  .product button:hover { opacity: 0.9; }
+  .cart { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 20px; }
+  .cart-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+  .cart-total { font-weight: 700; font-size: 18px; text-align: right; margin-top: 10px; }
+  .checkout-btn { width: 100%; padding: 12px; background: #25D366; color: #fff; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+  .checkout-btn:hover { opacity: 0.9; }
+  input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="container" id="app">
+  <h1>Mi Tienda</h1>
+  <div id="products"></div>
+  <div class="cart" id="cart">
+    <h3>Carrito</h3>
+    <div id="cart-items"><p style="color:#999;">Vacío</p></div>
+    <div class="cart-total" id="cart-total">Total: $0</div>
+    <input id="customer-name" placeholder="Tu nombre">
+    <input id="customer-address" placeholder="Tu dirección">
+    <button class="checkout-btn" id="checkout-btn" disabled>Checkout por WhatsApp</button>
+  </div>
+</div>
+<script src="../dist/whanda.min.js"></script>
+<script>
+  const w = new Whanda({ whatsappNumber: "1234567890" });
+
+  const products = [
+    { id: "1", name: "Camisa Blanca", price: 1200, stock: 10, category: "Ropa" },
+    { id: "2", name: "Pantalón Negro", price: 2500, stock: 5, category: "Ropa" },
+    { id: "3", name: "Gorra Deportiva", price: 800, stock: 15, category: "Accesorios" },
+  ];
+  w.setProducts(products);
+
+  function render() {
+    const productsEl = document.getElementById("products");
+    productsEl.innerHTML = products.map(p => `
+      <div class="product">
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">$${p.price}${p.stock != null ? ` — Stock: ${p.stock}` : ""}</div>
+        </div>
+        <button onclick="add('${p.id}')">Agregar</button>
+      </div>
+    `).join("");
+
+    const cart = w.getCart();
+    const cartItems = document.getElementById("cart-items");
+    if (cart.length === 0) {
+      cartItems.innerHTML = '<p style="color:#999;">Vacío</p>';
+    } else {
+      cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <span>${item.name} x${item.quantity}</span>
+          <span>$${item.price * item.quantity}</span>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("cart-total").textContent = `Total: $${w.getTotal()}`;
+    const name = document.getElementById("customer-name").value.trim();
+    const addr = document.getElementById("customer-address").value.trim();
+    document.getElementById("checkout-btn").disabled = !(cart.length > 0 && name && addr);
+  }
+
+  async function add(id) {
+    try { await w.addItem(id); render(); }
+    catch (e) { alert(e.message); }
+  }
+
+  document.getElementById("checkout-btn").onclick = async () => {
+    w.setCustomerName(document.getElementById("customer-name").value);
+    w.setCustomerAddress(document.getElementById("customer-address").value);
+    w.setPaymentMethod("Efectivo");
+    w.setDeliveryMethod("Home Delivery");
+    try {
+      const order = await w.createOrder();
+      const link = await w.sendToWhatsApp(order);
+      window.open(link, "_blank");
+    } catch (e) { alert(e.message); }
+  };
+
+  ["customer-name", "customer-address"].forEach(id =>
+    document.getElementById(id).addEventListener("input", render)
+  );
+  render();
+</script>
+</body>
+</html>

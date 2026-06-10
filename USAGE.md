@@ -249,7 +249,7 @@ w.on("afterCheckout", (order) => { /* order: created order */ });
 w.on("beforeWhatsAppSend", (order) => { /* order */ });
 w.on("beforeGenerateWhatsApp", (message) => { /* message: string */ });
 w.on("afterGenerateWhatsApp", (message) => { /* message: string */ });
-w.on("onCartEmpty", (data) => { /* data: { items, suggestion } */ });
+w.on("onCartEmpty", (data) => { /* data: { cart } */ });
 w.on("onRemoveItem", (data) => { /* data: { productId, cart } */ });
 ```
 

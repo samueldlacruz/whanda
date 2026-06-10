@@ -10,14 +10,15 @@
 export function initExtensions(Whanda) {
   /**
    * Exports all orders as a CSV string.
-   * Properly escapes commas, quotes, and newlines in values.
+   * Properly escapes commas, quotes, newlines, and HTML characters in values.
    *
    * @returns {string} CSV string with headers: ID,Fecha,Cliente,Total,Pago,Entrega,Status
    */
   Whanda.prototype.exportOrders = function () {
     if (this.state.orders.length === 0) return "";
     const escape = (val) => {
-      const str = String(val ?? "");
+      let str = String(val ?? "");
+      str = str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
       if (str.includes(",") || str.includes('"') || str.includes("\n")) {
         return `"${str.replace(/"/g, '""')}"`;
       }
@@ -26,7 +27,7 @@ export function initExtensions(Whanda) {
     const headers = ["ID,Fecha,Cliente,Total,Pago,Entrega,Status"];
     const rows = this.state.orders.map(
       (o) =>
-        `${o.id},${o.createdAt},${escape(o.customer.name)},${o.total},${escape(o.paymentMethod)},${escape(o.deliveryMethod)},${o.status}`
+        `${escape(o.id)},${escape(o.createdAt)},${escape(o.customer.name)},${o.total},${escape(o.paymentMethod)},${escape(o.deliveryMethod)},${escape(o.status)}`
     );
     return headers.concat(rows).join("\n");
   };

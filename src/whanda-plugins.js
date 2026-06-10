@@ -1,7 +1,11 @@
 const ERR = {
-  W036: "Bundle requires id, name, and products",
-  W037: "Bundle not found",
-  W038: "Season requires id, name, start, and end",
+  W100: "Bundle requiere id, name, y products",
+  W101: "Bundle no encontrado",
+  W102: "Season requiere id, name, start, y end",
+  W103: "Downsell requiere un discount numérico positivo",
+  W104: "Urgency requiere al menos uno de: lowStock, deadline, o badge",
+  W105: "Las fechas de season deben ser válidas y start debe ser anterior a end",
+  W106: "Ya existe un elemento con ese ID",
 };
 
 /**
@@ -14,8 +18,14 @@ export function initPlugins(Whanda) {
   /**
    * Sets the downsell configuration.
    * @param {Object} config - The downsell configuration.
+   * @param {number} config.discount - Discount amount (positive number, 0-1 for percent, >1 for fixed)
+   * @param {string} [config.message] - Message to display
+   * @throws {Error} W103 if discount is not a positive number
    */
   Whanda.prototype.setDownsell = function (config) {
+    if (!config || typeof config.discount !== "number" || config.discount <= 0) {
+      throw new Error(ERR.W103);
+    }
     this.state.downsell = config;
   };
 
@@ -40,11 +50,26 @@ export function initPlugins(Whanda) {
   /**
    * Creates a new season.
    * @param {Object} config - The season configuration with id, name, start, and end.
-   * @throws {Error} W038 if required fields are missing.
+   * @param {string} config.id - Unique season ID
+   * @param {string} config.name - Season name
+   * @param {string} config.start - Start date (ISO string)
+   * @param {string} config.end - End date (ISO string)
+   * @param {string[]} [config.products] - Product IDs in this season
+   * @throws {Error} W102 if required fields are missing
+   * @throws {Error} W105 if dates are invalid or start >= end
+   * @throws {Error} W106 if ID already exists
    */
   Whanda.prototype.createSeason = function (config) {
     if (!config.id || !config.name || !config.start || !config.end) {
-      throw new Error(ERR.W038);
+      throw new Error(ERR.W102);
+    }
+    const startDate = new Date(config.start);
+    const endDate = new Date(config.end);
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate >= endDate) {
+      throw new Error(ERR.W105);
+    }
+    if (this.state.seasons.some((s) => s.id === config.id)) {
+      throw new Error(ERR.W106);
     }
     this.state.seasons.push(config);
   };
@@ -93,8 +118,15 @@ export function initPlugins(Whanda) {
    * Sets urgency configuration for a product.
    * @param {string} productId - The product ID.
    * @param {Object} config - The urgency configuration.
+   * @param {number} [config.lowStock] - Low stock threshold
+   * @param {string} [config.deadline] - Deadline date (ISO string)
+   * @param {string} [config.badge] - Badge text to display
+   * @throws {Error} W104 if no valid urgency fields provided
    */
   Whanda.prototype.setProductUrgency = function (productId, config) {
+    if (!config || (!config.lowStock && !config.deadline && !config.badge)) {
+      throw new Error(ERR.W104);
+    }
     this.state.urgency[productId] = config;
   };
 
@@ -110,7 +142,7 @@ export function initPlugins(Whanda) {
     const product = this.getProduct(productId);
     const stock = product ? product.stock : null;
 
-    const isUrgent = config.deadline ? new Date() >= new Date(config.deadline) : false;
+    const isUrgent = config.deadline ? new Date() <= new Date(config.deadline) : false;
     const isLowStock = config.lowStock && stock !== null ? stock <= config.lowStock : false;
     const isCountdownActive = config.deadline ? new Date() < new Date(config.deadline) : false;
 
@@ -156,11 +188,19 @@ export function initPlugins(Whanda) {
   /**
    * Creates a new bundle.
    * @param {Object} config - The bundle configuration with id, name, and products.
-   * @throws {Error} W036 if required fields are missing.
+   * @param {string} config.id - Unique bundle ID
+   * @param {string} config.name - Bundle name
+   * @param {Array} config.products - Products (string IDs or { productId, quantity })
+   * @param {number} [config.discount] - Discount (0-1 for percent)
+   * @throws {Error} W100 if required fields are missing
+   * @throws {Error} W106 if ID already exists
    */
   Whanda.prototype.createBundle = function (config) {
     if (!config.id || !config.name || !config.products) {
-      throw new Error(ERR.W036);
+      throw new Error(ERR.W100);
+    }
+    if (this.state.bundles.some((b) => b.id === config.id)) {
+      throw new Error(ERR.W106);
     }
 
     let originalPrice = 0;
@@ -217,7 +257,7 @@ export function initPlugins(Whanda) {
    */
   Whanda.prototype.addBundle = async function (bundleId, quantity = 1) {
     const bundle = this.getBundle(bundleId);
-    if (!bundle) throw new Error(ERR.W037);
+    if (!bundle) throw new Error(ERR.W101);
 
     for (const item of bundle.products) {
       await this.addItem(item.productId, quantity * (item.quantity || 1));
@@ -231,7 +271,7 @@ export function initPlugins(Whanda) {
    */
   Whanda.prototype.removeBundle = function (bundleId) {
     const bundle = this.getBundle(bundleId);
-    if (!bundle) throw new Error(ERR.W037);
+    if (!bundle) throw new Error(ERR.W101);
 
     bundle.products.forEach((item) => {
       this.removeCartItem(item.productId);

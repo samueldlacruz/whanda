@@ -157,7 +157,7 @@ describe("Products", () => {
 
   it("should throw if setProducts receives non-array", () => {
     const w = new Whanda();
-    expect(() => w.setProducts("not array")).toThrow("setProducts() requires an array");
+    expect(() => w.setProducts("not array")).toThrow("setProducts() requiere un arreglo");
   });
 
   it("should get product by id", () => {
@@ -211,7 +211,7 @@ describe("Products", () => {
 
   it("should throw if search receives non-string", () => {
     const w = createWhanda();
-    expect(() => w.search(123)).toThrow("search() requires a string");
+    expect(() => w.search(123)).toThrow("search() requiere un texto de búsqueda");
   });
 
   it("should filter by category", () => {
@@ -330,22 +330,22 @@ describe("Cart", () => {
   });
 
   it("should throw for non-existent product", async () => {
-    await expect(w.addItem("999")).rejects.toThrow("Product not found");
+    await expect(w.addItem("999")).rejects.toThrow("Producto no encontrado");
   });
 
   it("should throw for invalid quantity", async () => {
-    await expect(w.addItem("1", 0)).rejects.toThrow("quantity must be a positive integer");
-    await expect(w.addItem("1", -1)).rejects.toThrow("quantity must be a positive integer");
-    await expect(w.addItem("1", 1.5)).rejects.toThrow("quantity must be a positive integer");
+    await expect(w.addItem("1", 0)).rejects.toThrow("La cantidad debe ser un número entero positivo");
+    await expect(w.addItem("1", -1)).rejects.toThrow("La cantidad debe ser un número entero positivo");
+    await expect(w.addItem("1", 1.5)).rejects.toThrow("La cantidad debe ser un número entero positivo");
   });
 
   it("should throw for insufficient stock", async () => {
-    await expect(w.addItem("1", 30)).rejects.toThrow("Insufficient stock");
+    await expect(w.addItem("1", 30)).rejects.toThrow("Stock insuficiente");
   });
 
   it("should throw when incrementing exceeds stock", async () => {
     await w.addItem("1", 20);
-    await expect(w.addItem("1", 10)).rejects.toThrow("Insufficient stock");
+    await expect(w.addItem("1", 10)).rejects.toThrow("Stock insuficiente");
   });
 
   it("should not check stock when stock is null", async () => {
@@ -376,16 +376,16 @@ describe("Cart", () => {
 
   it("should throw for invalid updateQuantity", async () => {
     await w.addItem("1");
-    expect(() => w.updateQuantity("1", -1)).toThrow("quantity must be a non-negative integer");
+    expect(() => w.updateQuantity("1", -1)).toThrow("La cantidad debe ser un número entero no negativo");
   });
 
   it("should throw when updating non-cart item", () => {
-    expect(() => w.updateQuantity("999", 1)).toThrow("Product not found in cart");
+    expect(() => w.updateQuantity("999", 1)).toThrow("Producto no encontrado en el carrito");
   });
 
   it("should throw when updateQuantity exceeds stock", async () => {
     await w.addItem("1");
-    expect(() => w.updateQuantity("1", 30)).toThrow("Insufficient stock");
+    expect(() => w.updateQuantity("1", 30)).toThrow("Stock insuficiente");
   });
 
   it("should check if cart has item", async () => {
@@ -522,11 +522,11 @@ describe("Coupons", () => {
   });
 
   it("should throw if coupon has no code", () => {
-    expect(() => w.addCoupon({ amount: 100 })).toThrow("valid 'code'");
+    expect(() => w.addCoupon({ amount: 100 })).toThrow("'code'");
   });
 
   it("should throw if coupon has no amount", () => {
-    expect(() => w.addCoupon({ code: "X" })).toThrow("valid 'amount'");
+    expect(() => w.addCoupon({ code: "X" })).toThrow("'amount'");
   });
 
   it("should validate coupon code", () => {
@@ -556,25 +556,25 @@ describe("Coupons", () => {
   });
 
   it("should throw for invalid coupon code", () => {
-    expect(() => w.applyCoupon("NOPE")).toThrow("Invalid coupon code");
+    expect(() => w.applyCoupon("NOPE")).toThrow("Cupón inválido");
   });
 
   it("should throw for expired coupon", async () => {
     w.addCoupon({ code: "OLD", amount: 100, expiresAt: "2020-01-01" });
     await w.addItem("1");
-    expect(() => w.applyCoupon("OLD")).toThrow("expired");
+    expect(() => w.applyCoupon("OLD")).toThrow("expirado");
   });
 
   it("should throw for coupon exceeding maxUses", async () => {
     w.addCoupon({ code: "LIMITED", amount: 100, maxUses: 1, usedCount: 1 });
     await w.addItem("1");
-    expect(() => w.applyCoupon("LIMITED")).toThrow("usage limit reached");
+    expect(() => w.applyCoupon("LIMITED")).toThrow("límite de usos");
   });
 
   it("should throw for coupon below minOrder", async () => {
     w.addCoupon({ code: "MIN5000", amount: 100, minOrder: 5000 });
     await w.addItem("1", 1);
-    expect(() => w.applyCoupon("MIN5000")).toThrow("Minimum order amount");
+    expect(() => w.applyCoupon("MIN5000")).toThrow("Monto mínimo");
   });
 
   it("should remove active coupon", async () => {
@@ -619,7 +619,7 @@ describe("Shipping", () => {
 
   it("should throw for negative fixed shipping", () => {
     const w = new Whanda();
-    expect(() => w.setFixedShipping(-100)).toThrow("non-negative number");
+    expect(() => w.setFixedShipping(-100)).toThrow("no negativo");
   });
 
   it("should set free shipping threshold", () => {
@@ -630,8 +630,8 @@ describe("Shipping", () => {
 
   it("should throw for invalid free shipping threshold", () => {
     const w = new Whanda();
-    expect(() => w.setFreeShippingFrom(0)).toThrow("positive number");
-    expect(() => w.setFreeShippingFrom(-100)).toThrow("positive number");
+    expect(() => w.setFreeShippingFrom(0)).toThrow("positivo");
+    expect(() => w.setFreeShippingFrom(-100)).toThrow("positivo");
   });
 
   it("should set per-item shipping", () => {
@@ -662,7 +662,7 @@ describe("Shipping", () => {
 
   it("should throw for invalid shipping method", () => {
     const w = new Whanda();
-    expect(() => w.setShippingMethod("drone")).toThrow("Invalid shipping method");
+    expect(() => w.setShippingMethod("drone")).toThrow("Método de envío inválido");
   });
 });
 
@@ -722,7 +722,7 @@ describe("Checkout", () => {
   });
 
   it("should throw for invalid payment method", () => {
-    expect(() => w.setPaymentMethod("Crypto")).toThrow("Invalid payment method");
+    expect(() => w.setPaymentMethod("Crypto")).toThrow("Método de pago inválido");
   });
 
   it("should set delivery method", () => {
@@ -731,7 +731,7 @@ describe("Checkout", () => {
   });
 
   it("should throw for invalid delivery method", () => {
-    expect(() => w.setDeliveryMethod("Drone")).toThrow("Invalid delivery method");
+    expect(() => w.setDeliveryMethod("Drone")).toThrow("Método de entrega inválido");
   });
 
   it("should validate checkout", async () => {
@@ -748,7 +748,7 @@ describe("Checkout", () => {
     w.setCustomerAddress("Calle 123");
     w.setPaymentMethod("Cash");
     w.setDeliveryMethod("Home Delivery");
-    expect(() => w.validateCheckout()).toThrow("Cart is empty");
+    expect(() => w.validateCheckout()).toThrow("El carrito está vacío");
   });
 
   it("should throw if no customer name", async () => {
@@ -756,7 +756,7 @@ describe("Checkout", () => {
     w.setCustomerAddress("Calle 123");
     w.setPaymentMethod("Cash");
     w.setDeliveryMethod("Home Delivery");
-    expect(() => w.validateCheckout()).toThrow("Customer name is required");
+    expect(() => w.validateCheckout()).toThrow("El nombre del cliente es requerido");
   });
 
   it("should throw if no address", async () => {
@@ -764,7 +764,7 @@ describe("Checkout", () => {
     w.setCustomerName("Juan");
     w.setPaymentMethod("Cash");
     w.setDeliveryMethod("Home Delivery");
-    expect(() => w.validateCheckout()).toThrow("Customer address is required");
+    expect(() => w.validateCheckout()).toThrow("dirección del cliente es requerida");
   });
 
   it("should throw if no payment method", async () => {
@@ -772,7 +772,7 @@ describe("Checkout", () => {
     w.setCustomerName("Juan");
     w.setCustomerAddress("Calle 123");
     w.setDeliveryMethod("Home Delivery");
-    expect(() => w.validateCheckout()).toThrow("Payment method is required");
+    expect(() => w.validateCheckout()).toThrow("El método de pago es requerido");
   });
 
   it("should throw if no delivery method", async () => {
@@ -780,7 +780,7 @@ describe("Checkout", () => {
     w.setCustomerName("Juan");
     w.setCustomerAddress("Calle 123");
     w.setPaymentMethod("Cash");
-    expect(() => w.validateCheckout()).toThrow("Delivery method is required");
+    expect(() => w.validateCheckout()).toThrow("El método de entrega es requerido");
   });
 
   it("should return preview", async () => {
@@ -888,22 +888,23 @@ describe("Orders", () => {
 
   it("should throw for invalid status", () => {
     const order = w.getLastOrder();
-    expect(() => w.updateOrderStatus(order.id, "invalid")).toThrow("Invalid status");
+    expect(() => w.updateOrderStatus(order.id, "invalid")).toThrow("Estado inválido");
   });
 
   it("should throw for non-existent order status update", () => {
-    expect(() => w.updateOrderStatus(999999, "confirmed")).toThrow("Order not found");
+    expect(() => w.updateOrderStatus(999999, "confirmed")).toThrow("Orden no encontrada");
   });
 
   it("should cancel order", () => {
     const order = w.getLastOrder();
     const cancelled = w.cancelOrder(order.id);
     expect(cancelled.id).toBe(order.id);
-    expect(w.listOrders()).toHaveLength(0);
+    expect(cancelled.status).toBe("cancelled");
+    expect(w.listOrders()).toHaveLength(1);
   });
 
   it("should throw for non-existent order cancel", () => {
-    expect(() => w.cancelOrder(999999)).toThrow("Order not found");
+    expect(() => w.cancelOrder(999999)).toThrow("Orden no encontrada");
   });
 
 
@@ -968,8 +969,8 @@ describe("WhatsApp", () => {
   });
 
   it("should throw for invalid WhatsApp number", () => {
-    expect(() => w.setWhatsAppNumber("123")).toThrow("between 7 and 15 digits");
-    expect(() => w.setWhatsAppNumber(true)).toThrow("string or number");
+    expect(() => w.setWhatsAppNumber("123")).toThrow("7 y 15 dígitos");
+    expect(() => w.setWhatsAppNumber(true)).toThrow("texto o número");
   });
 
   it("should register a WhatsApp template", () => {
@@ -978,8 +979,8 @@ describe("WhatsApp", () => {
   });
 
   it("should throw for invalid template registration", () => {
-    expect(() => w.registerWhatsAppTemplate("", () => {})).toThrow("non-empty string");
-    expect(() => w.registerWhatsAppTemplate("x", "not fn")).toThrow("function");
+    expect(() => w.registerWhatsAppTemplate("", () => {})).toThrow("no vacío");
+    expect(() => w.registerWhatsAppTemplate("x", "not fn")).toThrow("función");
   });
 
   it("should set active template", () => {
@@ -989,7 +990,7 @@ describe("WhatsApp", () => {
   });
 
   it("should throw for non-existent template", () => {
-    expect(() => w.setWhatsAppTemplate("nope")).toThrow("not found");
+    expect(() => w.setWhatsAppTemplate("nope")).toThrow("Plantilla no encontrada");
   });
 
   it("should list templates", () => {
@@ -1003,11 +1004,11 @@ describe("WhatsApp", () => {
   });
 
   it("should not remove default template", () => {
-    expect(() => w.removeWhatsAppTemplate("default")).toThrow("Cannot remove");
+    expect(() => w.removeWhatsAppTemplate("default")).toThrow("No se puede eliminar");
   });
 
   it("should throw removing non-existent template", () => {
-    expect(() => w.removeWhatsAppTemplate("nope")).toThrow("not found");
+    expect(() => w.removeWhatsAppTemplate("nope")).toThrow("Plantilla no encontrada");
   });
 
   it("should fallback to default when removing active template", () => {
@@ -1049,7 +1050,7 @@ describe("WhatsApp", () => {
   it("should throw if WhatsApp number not set for link", async () => {
     const w2 = new Whanda();
     const order = { items: [], customer: {}, subtotal: 0, shipping: 0, discount: 0, total: 0 };
-    await expect(w2.generateLink(order)).rejects.toThrow("WhatsApp number not set");
+    await expect(w2.generateLink(order)).rejects.toThrow("Número de WhatsApp no configurado");
   });
 
   it("should send to WhatsApp", async () => {
@@ -1072,7 +1073,7 @@ describe("WhatsApp", () => {
   });
 
   it("should throw preview for non-existent template", () => {
-    expect(() => w.previewWhatsAppTemplate("nope", {})).toThrow("Template not found");
+    expect(() => w.previewWhatsAppTemplate("nope", {})).toThrow("Plantilla no encontrada");
   });
 });
 

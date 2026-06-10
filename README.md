@@ -45,19 +45,30 @@ Whanda es un framework headless en JavaScript que permite construir catálogos d
 
 | Archivo | Tamaño |
 |---------|--------|
-| `whanda.min.js` (IIFE) | ~23 KB |
+| `whanda.min.js` (IIFE) | ~26 KB |
 | `whanda-plugins.min.js` (plugins) | ~4 KB |
 | `whanda-extensions.min.js` (extensions) | ~0.5 KB |
-| `whanda.esm.min.js` (ES Module) | ~28 KB |
+| `whanda.esm.min.js` (ES Module) | ~31 KB |
 | Con gzip (core) | ~8-10 KB |
 
 ---
 
 ## Instalación
 
+No requiere npm. Solo copia los archivos del directorio `dist/` a tu proyecto.
+
+**Estructura recomendada:**
+```
+tu-proyecto/
+├── index.html
+├── whanda.min.js           # ← copiado de dist/whanda.min.js
+├── whanda-plugins.min.js   # ← opcional, copiado de dist/whanda-plugins.min.js
+└── whanda-esm/             # ← opcional, copiado de dist/ (para ES Modules)
+```
+
 ### Script tag (HTML)
 ```html
-<!-- Core (~23KB) -->
+<!-- Core (~26KB) -->
 <script src="whanda.min.js"></script>
 <!-- Plugins opcionales (~4KB) — solo si los necesitas -->
 <script src="whanda-plugins.min.js"></script>
@@ -65,9 +76,8 @@ Whanda es un framework headless en JavaScript que permite construir catálogos d
 
 ### ES Module
 ```js
-import { Whanda } from "whanda";
-import { loadFromSheets } from "whanda/sheets";
-import { initPlugins } from "whanda/plugins";
+import { Whanda } from "./whanda.esm.min.js";
+// Whanda, loadFromSheets, initPlugins, initExtensions are all exported from the same file
 
 initPlugins(Whanda);
 ```
@@ -309,21 +319,24 @@ Copia este prompt y pégalo en tu agente de IA favorito:
 
 > **Prompt:**
 >
-> Usando whanda.min.js + whanda-plugins.min.js, crea una tienda de [ACCESORIOS / REPOSTERÍA / ROPA / ELECTRÓNICA / OTRO].
+> Usando los archivos whanda.min.js y whanda-plugins.min.js del proyecto, crea una tienda de [ACCESORIOS / REPOSTERÍA / ROPA / ELECTRÓNICA / OTRO] en un solo HTML.
+>
+> **IMPORTANTE:** No uses npm. No hagas `import` de paquetes. Los archivos whanda.min.js y whanda-plugins.min.js ya están disponibles en el proyecto — solo cópialos al mismo directorio del HTML (o referencia la ruta correcta).
 >
 > **Flujo:** Catálogo → Carrito → WhatsApp → Cierre manual (sin backend ni pasarela de pago).
 >
 > **Requisitos técnicos:**
-> 1. Incluir `<script src="whanda.min.js">` + `<script src="whanda-plugins.min.js">`
-> 2. Instancia: `new Whanda({ whatsappNumber: "NUM", shipping: { type: "fixed", value: X, freeFrom: Y } })`
-> 3. Productos: `w.setProducts([{ id, name, price, stock, category, image }])`
-> 4. Carrito: `await w.addItem(id)`, `w.getCart()`, `w.updateQuantity(id, qty)`
-> 5. Checkout: `w.setCustomerName()`, `w.setCustomerAddress()`, `w.setPaymentMethod()`, `w.setDeliveryMethod()`
-> 6. WhatsApp: `const order = await w.createOrder(); window.open(await w.sendToWhatsApp(order))`
-> 7. CRO (plugins): `w.setCRO({ freeShippingBar: true, freeShippingGoal: Y })` para barra de progreso
-> 8. Urgencia (plugins): `w.setProductUrgency(id, { lowStock: N, badge: "..." })` para alertas de stock
-> 9. Cupón: `w.addCoupon({ code: "X", amount: N, type: "percent" })`
-> 10. Diseño responsive con Tailwind CSS
+> 1. Copiar whanda.min.js y whanda-plugins.min.js al mismo directorio del HTML
+> 2. Incluir `<script src="whanda.min.js">` + `<script src="whanda-plugins.min.js">`
+> 3. Instancia: `new Whanda({ whatsappNumber: "NUM", shipping: { type: "fixed", value: X, freeFrom: Y } })`
+> 4. Productos: `w.setProducts([{ id, name, price, stock, category, image }])`
+> 5. Carrito: `await w.addItem(id)`, `w.getCart()`, `w.updateQuantity(id, qty)`
+> 6. Checkout: `w.setCustomerName()`, `w.setCustomerAddress()`, `w.setPaymentMethod()`, `w.setDeliveryMethod()`
+> 7. WhatsApp: `const order = await w.createOrder(); window.open(await w.sendToWhatsApp(order))`
+> 8. CRO (plugins): `w.setCRO({ freeShippingBar: true, freeShippingGoal: Y })` para barra de progreso
+> 9. Urgencia (plugins): `w.setProductUrgency(id, { lowStock: N, badge: "..." })` para alertas de stock
+> 10. Cupón: `w.addCoupon({ code: "X", amount: N, type: "percent" })`
+> 11. Diseño responsive con Tailwind CSS
 >
 > **Estructura mínima:**
 > ```html
@@ -338,7 +351,10 @@ Copia este prompt y pégalo en tu agente de IA favorito:
 > </script>
 > ```
 >
-> El archivo whanda.min.js y whanda-plugins.min.js ya están en el proyecto.
+> **Instrucciones de archivos:**
+> - whanda.min.js (core, ~26KB) — necesario
+> - whanda-plugins.min.js (plugins, ~4KB) — opcional pero recomendado
+> - Ambos archivos están en el proyecto; cópialos al mismo directorio del HTML para usar rutas relativas
 
 ---
 

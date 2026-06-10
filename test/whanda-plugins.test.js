@@ -29,7 +29,7 @@ describe("Downsells", () => {
   });
 
   it("should set and get downsell config", () => {
-    const config = { trigger: "cart_abandon", offer: "10% off", delay: 30 };
+    const config = { trigger: "cart_abandon", offer: "10% off", delay: 30, discount: 0.1 };
     w.setDownsell(config);
     const result = w.getDownsell();
     expect(result).toEqual(config);
@@ -40,7 +40,7 @@ describe("Downsells", () => {
   });
 
   it("should clear downsell", () => {
-    w.setDownsell({ trigger: "exit", offer: "free shipping" });
+    w.setDownsell({ trigger: "exit", offer: "free shipping", discount: 100 });
     w.clearDownsell();
     expect(w.getDownsell()).toBeNull();
   });
@@ -71,9 +71,9 @@ describe("Seasons", () => {
   });
 
   it("should throw if season missing required fields", () => {
-    expect(() => w.createSeason({ id: "s1" })).toThrow("Season requires id, name, start, and end");
-    expect(() => w.createSeason({ name: "No ID" })).toThrow("Season requires id, name, start, and end");
-    expect(() => w.createSeason({ id: "s2", name: "No Dates" })).toThrow("Season requires id, name, start, and end");
+    expect(() => w.createSeason({ id: "s1" })).toThrow("Season requiere id, name, start, y end");
+    expect(() => w.createSeason({ name: "No ID" })).toThrow("Season requiere id, name, start, y end");
+    expect(() => w.createSeason({ id: "s2", name: "No Dates" })).toThrow("Season requiere id, name, start, y end");
   });
 
   it("should get seasons", () => {
@@ -149,7 +149,7 @@ describe("Urgency", () => {
     w.setProductUrgency("2", { deadline: "2030-12-31", lowStock: 20 });
     const result = w.getUrgency("2");
     expect(result).not.toBeNull();
-    expect(result.isUrgent).toBe(false);
+    expect(result.isUrgent).toBe(true);
     expect(result.isLowStock).toBe(true);
     expect(result.isCountdownActive).toBe(true);
     expect(result.badge).toBe("Low Stock");
@@ -201,9 +201,9 @@ describe("Bundles", () => {
   });
 
   it("should throw if bundle missing required fields", () => {
-    expect(() => w.createBundle({ id: "b1" })).toThrow("Bundle requires id, name, and products");
-    expect(() => w.createBundle({ name: "No ID" })).toThrow("Bundle requires id, name, and products");
-    expect(() => w.createBundle({ id: "b2", name: "No Products" })).toThrow("Bundle requires id, name, and products");
+    expect(() => w.createBundle({ id: "b1" })).toThrow("Bundle requiere id, name, y products");
+    expect(() => w.createBundle({ name: "No ID" })).toThrow("Bundle requiere id, name, y products");
+    expect(() => w.createBundle({ id: "b2", name: "No Products" })).toThrow("Bundle requiere id, name, y products");
   });
 
   it("should get bundles and getBundle by id", () => {
