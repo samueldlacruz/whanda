@@ -120,6 +120,28 @@ describe("Hook System", () => {
     const result = await w.runHooks("beforeAddToCart", "original");
     expect(result).toBe("original");
   });
+
+  it("should fire onRemoveItem hook when removing item", async () => {
+    const w = new Whanda();
+    w.setProducts([{ id: "1", name: "Test", price: 100, stock: 10, category: "Cat" }]);
+    const fn = vi.fn();
+    w.on("onRemoveItem", fn);
+    await w.addItem("1");
+    w.removeCartItem("1");
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledWith(expect.objectContaining({ productId: "1" }));
+  });
+
+  it("should fire onCartEmpty hook when clearing cart", async () => {
+    const w = new Whanda();
+    w.setProducts([{ id: "1", name: "Test", price: 100, stock: 10, category: "Cat" }]);
+    const fn = vi.fn();
+    w.on("onCartEmpty", fn);
+    await w.addItem("1");
+    w.clearCart();
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(fn).toHaveBeenCalledWith(expect.objectContaining({ cart: expect.any(Array) }));
+  });
 });
 
 // =========================================================
@@ -522,6 +544,15 @@ describe("Coupons", () => {
     await w.addItem("1");
     w.applyCoupon("SAVE100");
     expect(w.getActiveCoupon().code).toBe("SAVE100");
+  });
+
+  it("should return applied coupon from applyCoupon", async () => {
+    w.addCoupon({ code: "SAVE100", amount: 100, type: "flat" });
+    await w.addItem("1");
+    const result = w.applyCoupon("SAVE100");
+    expect(result).toBeDefined();
+    expect(result.code).toBe("SAVE100");
+    expect(result.amount).toBe(100);
   });
 
   it("should throw for invalid coupon code", () => {

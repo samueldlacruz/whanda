@@ -165,9 +165,11 @@ export function initPlugins(Whanda) {
 
     let originalPrice = 0;
     config.products.forEach((item) => {
-      const product = this.getProduct(item.productId);
+      const pid = typeof item === "string" ? item : item.productId;
+      const qty = typeof item === "string" ? 1 : (item.quantity || 1);
+      const product = this.getProduct(pid);
       if (product) {
-        originalPrice += product.price * (item.quantity || 1);
+        originalPrice += product.price * qty;
       }
     });
 
@@ -175,10 +177,17 @@ export function initPlugins(Whanda) {
       ? originalPrice * (1 - config.discount)
       : originalPrice;
 
+    const normalizedProducts = config.products.map((item) =>
+      typeof item === "string"
+        ? { productId: item, quantity: 1 }
+        : { productId: item.productId, quantity: item.quantity || 1 }
+    );
+
     this.state.bundles.push({
       ...config,
+      products: normalizedProducts,
       originalPrice,
-      bundlePrice,
+      bundlePrice: Math.max(0, bundlePrice),
     });
   };
 
@@ -314,20 +323,14 @@ export function initPlugins(Whanda) {
    * @returns {Object} Free shipping progress data.
    */
   Whanda.prototype.checkFreeShippingProgress = function () {
-    const threshold = this.state.cro.freeShippingThreshold || 50;
+    const goal = this.state.cro.freeShippingGoal || this.config.shipping.freeFrom || 0;
     const cart = this.state.cart || [];
     const total = cart.reduce((sum, item) => {
       const product = this.getProduct(item.productId);
       return sum + (product ? product.price * item.quantity : 0);
     }, 0);
 
-    return {
-      threshold,
-      current: total,
-      remaining: Math.max(0, threshold - total),
-      qualifies: total >= threshold,
-      progress: Math.min(1, total / threshold),
-    };
+    return { current: total, goal, remaining: Math.max(0, goal - total), qualifies: total >= goal, progress: goal > 0 ? Math.min(1, total / goal) : 1 };
   };
 }
 

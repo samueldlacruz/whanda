@@ -190,7 +190,22 @@ export async function loadFromSheets(whanda, options = {}) {
     fetchUrl = buildGoogleSheetsCsvUrl(options.sheetUrl);
   }
 
-  const response = await fetch(fetchUrl);
+  const timeout = options.timeout || 15000;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  let response;
+  try {
+    response = await fetch(fetchUrl, { signal: controller.signal });
+  } catch (e) {
+    clearTimeout(timeoutId);
+    if (e.name === "AbortError") {
+      throw new Error(`Request timed out after ${timeout}ms`);
+    }
+    throw e;
+  }
+  clearTimeout(timeoutId);
+
   if (!response.ok) {
     throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
   }
@@ -200,7 +215,12 @@ export async function loadFromSheets(whanda, options = {}) {
 
   let csvText = text;
   if (contentType.includes("application/json")) {
-    const data = JSON.parse(text);
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error(`Invalid JSON response: ${e.message}`);
+    }
     if (data.csv) {
       csvText = data.csv;
     } else if (data.products) {

@@ -223,6 +223,22 @@ describe("Bundles", () => {
     expect(w.getBundle("nonexistent")).toBeNull();
   });
 
+  it("should create bundle with string products", () => {
+    w.createBundle({
+      id: "b3",
+      name: "String Bundle",
+      products: ["1", "2"],
+      discount: 0.1,
+    });
+    const bundle = w.getBundle("b3");
+    expect(bundle).toBeDefined();
+    expect(bundle.products).toEqual([
+      { productId: "1", quantity: 1 },
+      { productId: "2", quantity: 1 },
+    ]);
+    expect(bundle.originalPrice).toBe(3700);
+  });
+
   it("should add bundle to cart", async () => {
     w.createBundle({
       id: "b1",
@@ -294,7 +310,7 @@ describe("CRO", () => {
   });
 
   it("should get CRO data", () => {
-    w.setCRO({ freeShippingThreshold: 5000 });
+    w.setCRO({ freeShippingGoal: 5000 });
     const data = w.getCROData();
     expect(data).toHaveProperty("freeShippingProgress");
     expect(data).toHaveProperty("lowStockProducts");
@@ -324,9 +340,9 @@ describe("CRO", () => {
   });
 
   it("should check free shipping progress", () => {
-    w.setCRO({ freeShippingThreshold: 5000 });
+    w.setCRO({ freeShippingGoal: 5000 });
     const progress = w.checkFreeShippingProgress();
-    expect(progress.threshold).toBe(5000);
+    expect(progress.goal).toBe(5000);
     expect(progress.current).toBe(0);
     expect(progress.remaining).toBe(5000);
     expect(progress.qualifies).toBe(false);

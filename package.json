@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "type": "module",
   "description": "Headless Catalog + WhatsApp Checkout",
+  "license": "MIT",
   "main": "src/whanda.js",
   "exports": {
     ".": "./src/whanda.js",

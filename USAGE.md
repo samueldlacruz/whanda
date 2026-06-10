@@ -1,5 +1,7 @@
 # Whanda - Guía de Uso para AI Agents
 
+> Para documentación completa de todos los métodos, ver [DOC.md](./DOC.md)
+
 ## Qué es Whanda
 
 Framework headless para construir tiendas de productos con checkout por WhatsApp.
@@ -171,7 +173,7 @@ w.getBundles();                 // → [bundle objects]
 ```
 
 ### 14. CRO (Optimización de Conversión)
-> ⚠️ Requiere whanda-plugins.min.js
+> ⚠️ Requiere whanda-plugins.min.js. CRO es headless — provee datos, tú renderizas la UI.
 ```js
 w.setCRO({
   freeShippingBar: true,
@@ -183,7 +185,7 @@ w.setCRO({
   exitDiscount: 10
 });
 w.getCROData();              // → { freeShippingProgress, lowStockProducts, ... }
-w.checkFreeShippingProgress(); // → { current, goal, remaining, percentage }
+w.checkFreeShippingProgress(); // → { current, goal, remaining, qualifies, progress }
 w.trackProductView("1");     // registrar vista
 w.getRecentlyViewed();       // → [products]
 ```

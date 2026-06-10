@@ -65,12 +65,48 @@
     </div>
   </div>
 
+  <!-- Selector de moneda/región -->
+  <div id="currency-bar" class="bg-white shadow p-2">
+    <div class="container mx-auto flex justify-end items-center gap-4 text-sm">
+      <select id="region-select" onchange="changeRegion(this.value)" class="border rounded px-2 py-1">
+        <option value="DO">República Dominicana (DOP)</option>
+        <option value="US">Estados Unidos (USD)</option>
+        <option value="PR">Puerto Rico (USD)</option>
+      </select>
+      <button onclick="shareCatalog()" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+        📤 Compartir Catálogo
+      </button>
+    </div>
+  </div>
+
   <script>
-    // Inicializar Whanda
+    // Inicializar Whanda con multi-moneda y multi-región
     const whanda = new Whanda({
+      storeName: "Mi Tienda",
       whatsappNumber: "1234567890",
-      shipping: { type: "fixed", value: 200, freeFrom: 2000 }
+      shipping: { type: "fixed", value: 200, freeFrom: 2000 },
+      currencies: { USD: 1, DOP: 56.5 },
+      regions: {
+        DO: {
+          tax: { rate: 0.18, name: "ITBIS" },
+          shipping: { flat: 150, freeFrom: 2000 },
+          currency: "DOP"
+        },
+        US: {
+          tax: { rate: 0, name: "Tax" },
+          shipping: { flat: 5, freeFrom: 50 },
+          currency: "USD"
+        },
+        PR: {
+          tax: { rate: 0.115, name: "IVU" },
+          shipping: { flat: 8, freeFrom: 75 },
+          currency: "USD"
+        }
+      }
     });
+
+    // Establecer región por defecto
+    whanda.setRegion("DO");
 
     // Configurar CRO
     whanda.setCRO({
@@ -105,6 +141,19 @@
     // Cupón
     whanda.addCoupon({ code: "TIENDA10", amount: 10, type: "percent" });
 
+    // Cambiar región
+    function changeRegion(regionCode) {
+      whanda.setRegion(regionCode);
+      renderCatalog();
+      updateCartUI();
+    }
+
+    // Compartir catálogo
+    function shareCatalog() {
+      const url = whanda.getShareCatalogUrl({ url: window.location.href });
+      window.open(url, "_blank");
+    }
+
     // Renderizar catálogo
     function renderCatalog() {
       const catalog = document.getElementById("catalog");
@@ -113,13 +162,14 @@
         const badgeHtml = urgency && urgency.badge
           ? `<span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">${urgency.badge}</span>`
           : "";
+        const convertedPrice = whanda.convertPrice(p.price);
         return `
           <div class="bg-white rounded-lg shadow overflow-hidden relative">
             ${badgeHtml}
             <img src="${p.image}" alt="${p.name}" class="w-full h-40 object-cover">
             <div class="p-4">
               <h3 class="font-bold">${p.name}</h3>
-              <p class="text-gray-600">$${p.price.toLocaleString()}</p>
+              <p class="text-gray-600">${whanda.formatPrice(convertedPrice)}</p>
               <p class="text-xs text-gray-400">Stock: ${p.stock}</p>
               <button onclick="addToCart('${p.id}')" class="w-full bg-blue-500 text-white py-2 rounded mt-2 hover:bg-blue-600">
                 Agregar
@@ -163,7 +213,7 @@
             <img src="${whanda.getProduct(i.productId).image}" class="w-12 h-12 object-cover rounded">
             <div class="flex-1">
               <p class="font-medium">${i.name}</p>
-              <p class="text-sm text-gray-500">$${i.price.toLocaleString()}</p>
+              <p class="text-sm text-gray-500">${whanda.formatPrice(whanda.convertPrice(i.price))}</p>
             </div>
             <div class="flex items-center gap-2">
               <button onclick="updateQty('${i.productId}', ${i.quantity - 1})" class="w-7 h-7 bg-gray-200 rounded">-</button>
@@ -172,7 +222,8 @@
             </div>
           </div>
         `).join("");
-        document.getElementById("cart-total").textContent = `$${whanda.getTotal().toLocaleString()}`;
+        const pricing = whanda.calculate();
+        document.getElementById("cart-total").textContent = whanda.formatPrice(whanda.convertPrice(pricing.total));
       }
 
       updateShippingBar();
@@ -192,7 +243,7 @@
         bar.classList.remove("hidden");
         document.getElementById("shipping-text").textContent =
           `¡Faltan $${progress.remaining.toLocaleString()} para envío gratis!`;
-        document.getElementById("shipping-progress").style.width = `${progress.percentage}%`;
+        document.getElementById("shipping-progress").style.width = `${progress.progress * 100}%`;
       } else if (progress.goal > 0 && progress.current >= progress.goal) {
         bar.classList.remove("hidden");
         document.getElementById("shipping-text").textContent = "¡Tienes envío gratis!";

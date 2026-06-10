@@ -157,7 +157,10 @@ describe("loadFromSheets", () => {
       sheetUrl: "https://docs.google.com/spreadsheets/d/ABC123/edit",
     });
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("https://proxy.example.com");
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "https://proxy.example.com",
+      expect.objectContaining({ signal: expect.any(AbortSignal) })
+    );
   });
 
   it("should throw on fetch failure", async () => {

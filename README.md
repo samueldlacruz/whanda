@@ -22,8 +22,12 @@ Whanda es un framework headless en JavaScript que permite construir catálogos d
 - **Cupones** — monto fijo, porcentaje, expiración, límite de uso, mínimo de orden
 - **Checkout completo** con métodos de pago y entrega
 - **Órdenes con status** — pending, confirmed, shipped, delivered, cancelled
-- **WhatsApp** — generación de links con mensaje personalizado
-- **Persistencia** — save/load para localStorage
+- **Multi-moneda** — soporte para múltiples monedas con conversión automática
+- **Multi-región** — impuestos y envío por región (ej: ITBIS en DR)
+- **WhatsApp** — generación de links, compartir catálogo, página de agradecimiento
+- **Persistencia** — save/load para localStorage con cache TTL
+- **Escalabilidad** — lazy loading, paginación, múltiples fuentes de datos
+- **Seguridad** — sanitización de strings, validación de JSON, rate limiting
 - **Hook system** — personalizar cualquier paso del flujo
 - **Adapter Google Sheets** — cargar productos desde una hoja de cálculo
 - **Zero dependencias** — un solo archivo, sin librerías externas
@@ -33,7 +37,7 @@ Whanda es un framework headless en JavaScript que permite construir catálogos d
 - **Urgencia y escasez** — alertas de stock bajo, countdowns
 - **Bundles** — productos agrupados con descuento
 - **Downsells** — ofertas al abandonar carrito
-- **CRO** — barra de envío gratis, recently viewed, social proof
+- **CRO data** — free shipping progress, recently viewed tracking, social proof data (you render the UI)
 
 ---
 
@@ -41,23 +45,19 @@ Whanda es un framework headless en JavaScript que permite construir catálogos d
 
 | Archivo | Tamaño |
 |---------|--------|
-| `whanda.min.js` (IIFE) | ~14 KB |
+| `whanda.min.js` (IIFE) | ~23 KB |
 | `whanda-plugins.min.js` (plugins) | ~4 KB |
-| `whanda.esm.min.js` (ES Module) | ~14 KB |
-| Con gzip (core) | ~5-6 KB |
+| `whanda-extensions.min.js` (extensions) | ~0.5 KB |
+| `whanda.esm.min.js` (ES Module) | ~28 KB |
+| Con gzip (core) | ~8-10 KB |
 
 ---
 
 ## Instalación
 
-### npm
-```bash
-npm install whanda
-```
-
 ### Script tag (HTML)
 ```html
-<!-- Core (~14KB) -->
+<!-- Core (~23KB) -->
 <script src="whanda.min.js"></script>
 <!-- Plugins opcionales (~4KB) — solo si los necesitas -->
 <script src="whanda-plugins.min.js"></script>
@@ -259,21 +259,32 @@ relatedIds,upsellIds,crossSellIds
 
 La hoja debe estar configurada como "Anyone with the link can view".
 
+**Opción A — HTML (script tags):**
 ```html
 <script src="whanda.min.js"></script>
-<script type="module">
-  import { Whanda } from "./dist/whanda.min.js";
-  import { loadFromSheets } from "./dist/whanda.esm.min.js";
-
+<script>
   const w = new Whanda({ whatsappNumber: "1234567890" });
 
-  await loadFromSheets(w, {
+  Whanda.loadFromSheets(w, {
     sheetUrl: "https://docs.google.com/spreadsheets/d/SHEET_ID/edit?gid=0"
+  }).then(() => {
+    console.log(w.getProducts());
   });
-
-  // Los productos ya están cargados
-  console.log(w.getProducts());
 </script>
+```
+
+**Opción B — ES Module:**
+```js
+import { Whanda } from "whanda";
+import { loadFromSheets } from "whanda/sheets";
+
+const w = new Whanda({ whatsappNumber: "1234567890" });
+
+await loadFromSheets(w, {
+  sheetUrl: "https://docs.google.com/spreadsheets/d/SHEET_ID/edit?gid=0"
+});
+
+console.log(w.getProducts());
 ```
 
 ### Con proxy (recomendado para producción)
@@ -298,20 +309,36 @@ Copia este prompt y pégalo en tu agente de IA favorito:
 
 > **Prompt:**
 >
-> Usando whanda.min.js, crea una tienda de [ACCESORIOS / REPOSTERÍA / ROPA / ELECTRÓNICA / OTRO].
+> Usando whanda.min.js + whanda-plugins.min.js, crea una tienda de [ACCESORIOS / REPOSTERÍA / ROPA / ELECTRÓNICA / OTRO].
 >
-> Requisitos:
-> - 4-6 productos con imágenes, precios y stock
-> - Carrito que se actualice en tiempo real
-> - Checkout con nombre, dirección, pago y entrega
-> - Botón de WhatsApp que envíe el pedido
-> - Diseño responsive con Tailwind CSS
-> - Cupón de descuento: [CÓDIGO] ([DESCUENTO]% o monto fijo)
-> - Envío: [FIJO $XXX / GRATIS DESDE $XXX / POR ÍTEM $XXX]
-> - Urgencia de stock en productos con bajo inventario
-> - Barra de progreso de envío gratis
+> **Flujo:** Catálogo → Carrito → WhatsApp → Cierre manual (sin backend ni pasarela de pago).
 >
-> El archivo whanda.min.js ya está en el proyecto.
+> **Requisitos técnicos:**
+> 1. Incluir `<script src="whanda.min.js">` + `<script src="whanda-plugins.min.js">`
+> 2. Instancia: `new Whanda({ whatsappNumber: "NUM", shipping: { type: "fixed", value: X, freeFrom: Y } })`
+> 3. Productos: `w.setProducts([{ id, name, price, stock, category, image }])`
+> 4. Carrito: `await w.addItem(id)`, `w.getCart()`, `w.updateQuantity(id, qty)`
+> 5. Checkout: `w.setCustomerName()`, `w.setCustomerAddress()`, `w.setPaymentMethod()`, `w.setDeliveryMethod()`
+> 6. WhatsApp: `const order = await w.createOrder(); window.open(await w.sendToWhatsApp(order))`
+> 7. CRO (plugins): `w.setCRO({ freeShippingBar: true, freeShippingGoal: Y })` para barra de progreso
+> 8. Urgencia (plugins): `w.setProductUrgency(id, { lowStock: N, badge: "..." })` para alertas de stock
+> 9. Cupón: `w.addCoupon({ code: "X", amount: N, type: "percent" })`
+> 10. Diseño responsive con Tailwind CSS
+>
+> **Estructura mínima:**
+> ```html
+> <script src="whanda.min.js"></script>
+> <script src="whanda-plugins.min.js"></script>
+> <script>
+>   const w = new Whanda({ whatsappNumber: "NUM", shipping: { type: "fixed", value: 200, freeFrom: 3000 } });
+>   w.setProducts([...]);
+>   w.setCRO({ freeShippingBar: true, freeShippingGoal: 3000 });
+>   w.setProductUrgency("id", { lowStock: 3, badge: "¡Solo 3!" });
+>   w.addCoupon({ code: "DESCUENTO10", amount: 10, type: "percent" });
+> </script>
+> ```
+>
+> El archivo whanda.min.js y whanda-plugins.min.js ya están en el proyecto.
 
 ---
 
@@ -346,6 +373,7 @@ Copia este prompt y pégalo en tu agente de IA favorito:
 
 ## Documentación Completa
 
+- [DOC.md](./DOC.md) — Referencia completa de todos los métodos
 - [USAGE.md](./USAGE.md) — Guía completa para AI agents y desarrolladores
 - [JSDoc](./src/whanda.js) — Documentación inline en el código fuente
 

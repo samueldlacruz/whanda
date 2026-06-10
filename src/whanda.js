@@ -78,6 +78,9 @@ export class Whanda {
       shipping: { type: "fixed", value: 0, freeFrom: null, perItem: 0 },
       paymentMethods: ["Cash", "Bank Transfer"],
       deliveryMethods: ["Home Delivery", "In-store Pickup"],
+      currencies: {},
+      regions: {},
+      storeName: "Mi Tienda",
       ...config,
     };
 
@@ -111,6 +114,8 @@ export class Whanda {
         exitDiscount: 0,
       },
       recentlyViewed: [],
+      activeCurrency: config.currency || "DOP",
+      activeRegion: null,
     };
 
     this.hooks = {
@@ -134,6 +139,8 @@ export class Whanda {
       },
       active: "default",
     };
+
+    this._rateLimiters = {};
   }
 
   // =========================================================
@@ -230,6 +237,74 @@ export class Whanda {
     return `Insufficient stock for "${name}". Available: ${stock}`;
   }
 
+  /**
+   * Sanitizes a string by escaping HTML entities.
+   * Prevents XSS when rendering user-provided content.
+   *
+   * @param {*} str - Value to sanitize
+   * @returns {*} Sanitized string, or original value if not a string
+   * @private
+   */
+  _sanitizeString(str) {
+    if (typeof str !== "string") return str;
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#x27;");
+  }
+
+  /**
+   * Sanitizes all string properties in an object (recursive).
+   *
+   * @param {*} obj - Object, array, or primitive to sanitize
+   * @returns {*} Sanitized copy with escaped strings
+   * @private
+   */
+  _sanitizeObject(obj) {
+    if (obj === null || typeof obj !== "object") {
+      return typeof obj === "string" ? this._sanitizeString(obj) : obj;
+    }
+    if (Array.isArray(obj)) {
+      return obj.map((item) => this._sanitizeObject(item));
+    }
+
+    const sanitized = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === "string") {
+        sanitized[key] = this._sanitizeString(value);
+      } else if (typeof value === "object" && value !== null) {
+        sanitized[key] = this._sanitizeObject(value);
+      } else {
+        sanitized[key] = value;
+      }
+    }
+    return sanitized;
+  }
+
+  /**
+   * Creates a rate limiter for API calls.
+   *
+   * @param {number} maxCalls - Maximum calls per window
+   * @param {number} windowMs - Time window in milliseconds
+   * @returns {Object} Rate limiter with check() method
+   * @private
+   */
+  _createRateLimiter(maxCalls = 100, windowMs = 60000) {
+    const calls = [];
+    return {
+      check: () => {
+        const now = Date.now();
+        calls.push(now);
+        while (calls.length > 0 && calls[0] < now - windowMs) {
+          calls.shift();
+        }
+        return calls.length <= maxCalls;
+      },
+    };
+  }
+
   // =========================================================
   // CONFIGURATION
   // =========================================================
@@ -252,6 +327,162 @@ export class Whanda {
    */
   updateConfig(partialConfig) {
     this.config = { ...this.config, ...partialConfig };
+  }
+
+  // =========================================================
+  // MULTI-CURRENCY
+  // =========================================================
+
+  /**
+   * Sets the active currency for price display.
+   *
+   * @param {string} currencyCode - ISO 4217 currency code (e.g., "USD", "DOP", "EUR")
+   * @throws {Error} If currency is not in supported currencies list
+   */
+  setCurrency(currencyCode) {
+    const supported = Object.keys(this.config.currencies);
+    if (supported.length > 0 && !supported.includes(currencyCode)) {
+      throw new Error(`Currency "${currencyCode}" is not supported. Supported: ${supported.join(", ")}`);
+    }
+    this.state.activeCurrency = currencyCode;
+  }
+
+  /**
+   * Returns the active currency code.
+   *
+   * @returns {string} Active currency code
+   */
+  getCurrency() {
+    return this.state.activeCurrency;
+  }
+
+  /**
+   * Returns the exchange rate for a currency relative to the base currency.
+   *
+   * @param {string} currencyCode - Currency code to get rate for
+   * @returns {number} Exchange rate (1.0 if same as base or not configured)
+   */
+  getExchangeRate(currencyCode) {
+    if (!this.config.currencies[currencyCode]) return 1;
+    return this.config.currencies[currencyCode];
+  }
+
+  /**
+   * Converts a price from base currency to the active currency.
+   *
+   * @param {number} basePrice - Price in base currency
+   * @returns {number} Converted price in active currency
+   */
+  convertPrice(basePrice) {
+    if (typeof basePrice !== "number" || !Number.isFinite(basePrice)) return 0;
+    const rate = this.getExchangeRate(this.state.activeCurrency);
+    return Math.round(basePrice * rate * 100) / 100;
+  }
+
+  /**
+   * Formats a price with currency symbol using locale formatting.
+   *
+   * @param {number} amount - Amount to format
+   * @param {string} [currencyCode] - Currency code (defaults to active currency)
+   * @returns {string} Formatted price string
+   */
+  formatPrice(amount, currencyCode) {
+    const code = currencyCode || this.state.activeCurrency;
+    try {
+      return new Intl.NumberFormat(this.config.locale, {
+        style: "currency",
+        currency: code,
+      }).format(amount);
+    } catch {
+      return `${code} ${amount.toFixed(2)}`;
+    }
+  }
+
+  // =========================================================
+  // MULTI-REGION
+  // =========================================================
+
+  /**
+   * Sets the active region for tax and shipping calculations.
+   *
+   * @param {string} regionCode - Region code (e.g., "DO", "US", "PR")
+   * @throws {Error} If region is not in supported regions list
+   */
+  setRegion(regionCode) {
+    const supported = Object.keys(this.config.regions);
+    if (supported.length > 0 && !supported.includes(regionCode)) {
+      throw new Error(`Region "${regionCode}" is not supported. Supported: ${supported.join(", ")}`);
+    }
+    this.state.activeRegion = regionCode;
+
+    const region = this.config.regions[regionCode];
+    if (region && region.currency) {
+      this.state.activeCurrency = region.currency;
+    }
+  }
+
+  /**
+   * Returns the active region code.
+   *
+   * @returns {string|null} Active region code
+   */
+  getRegion() {
+    return this.state.activeRegion;
+  }
+
+  /**
+   * Returns the tax rate for the active region.
+   *
+   * @param {string} [productId] - Optional product ID for product-specific tax
+   * @returns {number} Tax rate (0-1), e.g., 0.18 for 18%
+   */
+  getTax(productId) {
+    const region = this.config.regions[this.state.activeRegion];
+    if (!region || !region.tax) return 0;
+    if (typeof region.tax === "number") return region.tax;
+    if (typeof region.tax === "object" && region.tax.rate !== undefined) {
+      return region.tax.rate;
+    }
+    return 0;
+  }
+
+  /**
+   * Returns the tax name for the active region (e.g., "ITBIS", "IVU", "Tax").
+   *
+   * @returns {string} Tax name
+   */
+  getTaxName() {
+    const region = this.config.regions[this.state.activeRegion];
+    if (!region || !region.tax) return "Tax";
+    if (typeof region.tax === "object" && region.tax.name) {
+      return region.tax.name;
+    }
+    return "Tax";
+  }
+
+  /**
+   * Returns the shipping cost for the active region based on cart subtotal.
+   *
+   * @param {number} [subtotal] - Cart subtotal (uses current cart if not provided)
+   * @returns {number} Shipping cost in active currency
+   */
+  getRegionalShippingCost(subtotal) {
+    const region = this.config.regions[this.state.activeRegion];
+    if (!region || !region.shipping) {
+      return this.config.shipping.value || 0;
+    }
+
+    const sub = subtotal !== undefined ? subtotal : this.getSubtotal();
+    const shipping = region.shipping;
+
+    if (shipping.freeFrom && sub >= shipping.freeFrom) return 0;
+    if (shipping.flat !== undefined) return shipping.flat;
+    if (shipping.type === "per_item") {
+      const itemCount = this.getCartItemCount();
+      return itemCount * (shipping.perItem || 0);
+    }
+
+    return 0;
   }
 
   // =========================================================
@@ -638,6 +869,7 @@ export class Whanda {
    * Clears all items from the cart. Fires `afterCartChange` hook.
    */
   clearCart() {
+    this.runHooks("onCartEmpty", { cart: [...this.state.cart] });
     this.state.cart = [];
     this.runHooks("afterCartChange", this.state.cart);
   }
@@ -648,6 +880,7 @@ export class Whanda {
    * @param {string|number} productId - Product identifier to remove
    */
   removeCartItem(productId) {
+    this.runHooks("onRemoveItem", { productId, cart: [...this.state.cart] });
     this.state.cart = this.state.cart.filter(
       (item) => item.productId !== productId
     );
@@ -759,7 +992,7 @@ export class Whanda {
   }
 
   /**
-   * Calculates the order total: subtotal - discount + shipping.
+   * Calculates the order total: subtotal - discount + shipping + tax.
    * Never returns a negative value.
    *
    * @returns {number} Total amount
@@ -768,24 +1001,35 @@ export class Whanda {
     const subtotal = this.getSubtotal();
     const discount = this.getDiscountAmount();
     const shipping = this.getShippingCost();
-    const total = subtotal - discount + shipping;
+    const taxRate = this.getTax();
+    const taxAmount = Math.round((subtotal - discount) * taxRate * 100) / 100;
+    const total = subtotal - discount + shipping + taxAmount;
     return Math.max(0, total);
   }
 
   /**
-   * Returns a full pricing breakdown.
+   * Returns a full pricing breakdown including tax.
    *
    * @returns {Object} Pricing summary
    * @returns {number} return.subtotal - Cart subtotal
    * @returns {number} return.shipping - Shipping cost
    * @returns {number} return.discount - Discount amount
+   * @returns {number} return.tax - Tax amount
+   * @returns {number} return.taxRate - Tax rate (0-1)
    * @returns {number} return.total - Final total
    */
   calculate() {
+    const subtotal = this.getSubtotal();
+    const discount = this.getDiscountAmount();
+    const taxRate = this.getTax();
+    const taxAmount = Math.round((subtotal - discount) * taxRate * 100) / 100;
+
     return {
-      subtotal: this.getSubtotal(),
+      subtotal,
       shipping: this.getShippingCost(),
-      discount: this.getDiscountAmount(),
+      discount,
+      tax: taxAmount,
+      taxRate,
       total: this.getTotal(),
     };
   }
@@ -793,18 +1037,6 @@ export class Whanda {
   /**
    * Formats a numeric amount using the configured currency and locale.
    *
-   * @param {number} amount - Amount to format
-   * @returns {string} Formatted price string (e.g., "RD$1,200.00")
-   * @example
-   * whanda.formatPrice(1200); // "RD$1,200.00"
-   */
-  formatPrice(amount) {
-    return new Intl.NumberFormat(this.config.locale, {
-      style: "currency",
-      currency: this.config.currency,
-    }).format(amount);
-  }
-
   // =========================================================
   // DISCOUNTS / COUPONS
   // =========================================================
@@ -883,6 +1115,7 @@ export class Whanda {
     }
 
     this.state.coupon = coupon;
+    return { ...coupon };
   }
 
   /**
@@ -1120,13 +1353,19 @@ export class Whanda {
     this.validateCheckout();
     await this.runHooks("beforeCheckout", meta);
 
+    const pricing = this.calculate();
     const order = {
       id: Date.now(),
       items: structuredClone(this.state.cart),
-      subtotal: this.getSubtotal(),
-      shipping: this.getShippingCost(),
-      discount: this.getDiscountAmount(),
-      total: this.getTotal(),
+      subtotal: pricing.subtotal,
+      shipping: pricing.shipping,
+      discount: pricing.discount,
+      tax: pricing.tax,
+      taxRate: pricing.taxRate,
+      taxName: this.getTaxName(),
+      total: pricing.total,
+      currency: this.state.activeCurrency,
+      region: this.state.activeRegion,
       customer: { ...this.state.customer },
       paymentMethod: this.state.checkout.paymentMethod,
       deliveryMethod: this.state.checkout.deliveryMethod,
@@ -1248,14 +1487,52 @@ export class Whanda {
    * Merges loaded data into the current instance (shallow merge).
    *
    * @param {string} jsonString - JSON string from `save()`
+   * @throws {Error} If jsonString is not valid JSON
    * @example
    * const saved = localStorage.getItem("whanda");
    * if (saved) whanda.load(saved);
    */
   load(jsonString) {
-    const data = JSON.parse(jsonString);
-    if (data.config) this.config = { ...this.config, ...data.config };
-    if (data.state) this.state = { ...this.state, ...data.state };
+    let data;
+    try {
+      data = JSON.parse(jsonString);
+    } catch (e) {
+      throw new Error(`Invalid JSON in load(): ${e.message}`);
+    }
+
+    if (data === null || typeof data !== "object") {
+      throw new Error("load() expects a JSON object");
+    }
+
+    if (data.config) {
+      const allowedConfigKeys = [
+        "currency", "locale", "whatsappNumber", "shipping",
+        "paymentMethods", "deliveryMethods", "storeName",
+      ];
+      const safeConfig = {};
+      for (const key of allowedConfigKeys) {
+        if (data.config[key] !== undefined) {
+          safeConfig[key] = data.config[key];
+        }
+      }
+      this.config = { ...this.config, ...safeConfig };
+    }
+
+    if (data.state) {
+      const allowedStateKeys = [
+        "cart", "coupons", "coupon", "customer", "checkout",
+        "orders", "downsell", "seasons", "urgency", "bundles",
+        "cro", "recentlyViewed",
+      ];
+      const safeState = {};
+      for (const key of allowedStateKeys) {
+        if (data.state[key] !== undefined) {
+          safeState[key] = data.state[key];
+        }
+      }
+      this.state = { ...this.state, ...safeState };
+    }
+
     if (data.templates && data.templates.active) {
       this.templates.active = data.templates.active;
     }
@@ -1288,6 +1565,188 @@ export class Whanda {
     const result = payload;
     await this.runHooks("afterSync", result);
     return result;
+  }
+
+  // =========================================================
+  // SCALABILITY - DATA SOURCES & CACHE
+  // =========================================================
+
+  /**
+   * Loads products from multiple data sources.
+   *
+   * @param {Array} sources - Array of data source configs
+   * @param {string} sources[].type - Source type: "json", "sheets", or "cache"
+   * @param {string} [sources[].url] - URL for JSON or Sheets sources
+   * @param {string} [sources[].proxyUrl] - Proxy URL for Sheets
+   * @param {number} [sources[].ttl=3600] - Cache TTL in seconds
+   * @returns {Promise<Object[]>} All loaded products
+   */
+  async loadFromSources(sources) {
+    const allProducts = [];
+
+    for (const source of sources) {
+      try {
+        if (source.type === "json") {
+          const response = await fetch(source.url);
+          if (response.ok) {
+            const data = await response.json();
+            const products = Array.isArray(data) ? data : data.products || [];
+            allProducts.push(...products);
+          }
+        } else if (source.type === "sheets") {
+          const { loadFromSheets } = await import("./whanda-sheets.js");
+          const products = await loadFromSheets(this, {
+            sheetUrl: source.url,
+            proxyUrl: source.proxyUrl,
+            timeout: source.timeout || 15000,
+          });
+          allProducts.push(...products);
+        } else if (source.type === "cache") {
+          const cached = this._getCache("whanda_products");
+          if (cached) {
+            allProducts.push(...cached);
+          }
+        }
+      } catch (e) {
+        console.warn(`Whanda: Failed to load from source "${source.type}":`, e.message);
+      }
+    }
+
+    if (allProducts.length > 0) {
+      this.setProducts(allProducts);
+    }
+
+    return allProducts;
+  }
+
+  /**
+   * Sets cache with TTL (time-to-live).
+   *
+   * @param {string} key - Cache key
+   * @param {*} value - Value to cache
+   * @param {number} [ttl=3600] - TTL in seconds
+   */
+  _setCache(key, value, ttl = 3600) {
+    const item = {
+      value,
+      expires: Date.now() + ttl * 1000,
+    };
+    try {
+      localStorage.setItem(`whanda_${key}`, JSON.stringify(item));
+    } catch {
+      // localStorage not available or full
+    }
+  }
+
+  /**
+   * Gets value from cache. Returns null if expired or not found.
+   *
+   * @param {string} key - Cache key
+   * @returns {*} Cached value or null
+   */
+  _getCache(key) {
+    try {
+      const item = JSON.parse(localStorage.getItem(`whanda_${key}`));
+      if (!item || Date.now() > item.expires) {
+        localStorage.removeItem(`whanda_${key}`);
+        return null;
+      }
+      return item.value;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Clears a specific cache key or all Whanda cache.
+   *
+   * @param {string} [key] - Cache key to clear (clears all if omitted)
+   */
+  _clearCache(key) {
+    if (key) {
+      localStorage.removeItem(`whanda_${key}`);
+    } else {
+      const keys = Object.keys(localStorage).filter((k) => k.startsWith("whanda_"));
+      keys.forEach((k) => localStorage.removeItem(k));
+    }
+  }
+
+  /**
+   * Caches current products to localStorage.
+   *
+   * @param {number} [ttl=3600] - TTL in seconds
+   */
+  cacheProducts(ttl = 3600) {
+    this._setCache("products", this.state.products, ttl);
+  }
+
+  /**
+   * Loads products from cache if available.
+   *
+   * @returns {boolean} True if products were loaded from cache
+   */
+  loadProductsFromCache() {
+    const cached = this._getCache("products");
+    if (cached && Array.isArray(cached)) {
+      this.state.products = cached;
+      return true;
+    }
+    return false;
+  }
+
+  // =========================================================
+  // SCALABILITY - PAGINATION
+  // =========================================================
+
+  /**
+   * Returns a paginated subset of products.
+   *
+   * @param {number} [page=1] - Page number (1-indexed)
+   * @param {number} [pageSize=20] - Items per page
+   * @param {Object} [filters] - Optional filters (category, search, etc.)
+   * @returns {Object} { products, total, page, pageSize, totalPages }
+   */
+  getProductsPaginated(page = 1, pageSize = 20, filters = {}) {
+    let filtered = this.getProducts(filters);
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const start = (page - 1) * pageSize;
+    const products = filtered.slice(start, start + pageSize);
+
+    return {
+      products,
+      total,
+      page,
+      pageSize,
+      totalPages,
+      hasNext: page < totalPages,
+      hasPrev: page > 1,
+    };
+  }
+
+  /**
+   * Returns products in batches for lazy loading.
+   *
+   * @param {number} [batchSize=20] - Number of products per batch
+   * @returns {Object} { getNextBatch, hasMore, reset }
+   */
+  createProductIterator(batchSize = 20) {
+    let currentIndex = 0;
+    const products = this.state.products;
+
+    return {
+      getNextBatch: () => {
+        const batch = products.slice(currentIndex, currentIndex + batchSize);
+        currentIndex += batchSize;
+        return batch;
+      },
+      hasMore: () => currentIndex < products.length,
+      reset: () => {
+        currentIndex = 0;
+      },
+      getTotal: () => products.length,
+      getLoaded: () => currentIndex,
+    };
   }
 
   // =========================================================
@@ -1451,6 +1910,81 @@ export class Whanda {
   }
 
   /**
+   * Generates a WhatsApp link to share the entire catalog.
+   *
+   * @param {Object} [options] - Sharing options
+   * @param {string} [options.message] - Custom message
+   * @param {string} [options.url] - Catalog URL to include
+   * @returns {string} WhatsApp share URL
+   */
+  getShareCatalogUrl(options = {}) {
+    const storeName = this.config.storeName || "Mi Tienda";
+    const productCount = this.state.products.length;
+    const categories = this.getCategories();
+    const categoriesText = categories.length > 0 ? `\n📦 Categorías: ${categories.join(", ")}` : "";
+
+    const message = options.message ||
+      `🛍️ *${storeName}*\n\nTenemos ${productCount} productos disponibles${categoriesText}\n\n${options.url ? `Ver catálogo: ${options.url}` : ""}`;
+
+    return `https://api.whatsapp.com/send?text=${encodeURIComponent(message.trim())}`;
+  }
+
+  /**
+   * Returns HTML for a customizable thank-you page after WhatsApp checkout.
+   *
+   * @param {Object} [options] - Thank you page options
+   * @param {string} [options.message="¡Gracias por tu compra!"] - Main message
+   * @param {boolean} [options.showOrderSummary=true] - Show order summary
+   * @param {string} [options.shareText] - Text for share button
+   * @param {string} [options.catalogUrl] - URL to return to catalog
+   * @returns {string} HTML string
+   */
+  getThankYouHtml(options = {}) {
+    const {
+      message = "¡Gracias por tu compra!",
+      showOrderSummary = true,
+      shareText = "Compra en nuestra tienda",
+      catalogUrl = "#",
+    } = options;
+
+    const lastOrder = this.getLastOrder();
+    const storeName = this.config.storeName || "Mi Tienda";
+
+    let orderSummary = "";
+    if (showOrderSummary && lastOrder) {
+      const items = lastOrder.items
+        .map((i) => `<li>${this._sanitizeString(i.name)} x${i.quantity} - ${this.formatPrice(i.price * i.quantity)}</li>`)
+        .join("");
+
+      orderSummary = `
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+          <h3 style="margin: 0 0 10px 0;">Resumen de tu orden</h3>
+          <ul style="margin: 0; padding-left: 20px;">${items}</ul>
+          <p style="margin: 10px 0 0 0; font-weight: bold;">
+            Total: ${this.formatPrice(lastOrder.total)}
+          </p>
+        </div>
+      `;
+    }
+
+    return `
+      <div style="text-align: center; padding: 40px 20px; font-family: system-ui, sans-serif;">
+        <h2 style="color: #28a745;">✓ ${this._sanitizeString(message)}</h2>
+        <p style="color: #666;">${this._sanitizeString(storeName)}</p>
+        ${orderSummary}
+        <div style="margin-top: 30px;">
+          <a href="${catalogUrl}" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; margin: 5px;">
+            Volver al catálogo
+          </a>
+          <a href="${this.getShareCatalogUrl({ message: shareText })}" target="_blank" style="display: inline-block; padding: 12px 24px; background: #25d366; color: white; text-decoration: none; border-radius: 6px; margin: 5px;">
+            Compartir con un amigo
+          </a>
+        </div>
+      </div>
+    `.trim();
+  }
+
+  /**
    * Returns the default WhatsApp message template function.
    * Generates a Spanish-language message with order details and emojis.
    *
@@ -1467,6 +2001,14 @@ export class Whanda {
         ? `\n👤 *Cliente:* ${order.customer.name}\n📍 *Dirección:* ${order.customer.address}`
         : "";
 
+      const taxInfo = order.tax > 0
+        ? `\n${order.taxName || "Tax"} (${(order.taxRate * 100).toFixed(0)}%): ${order.tax}`
+        : "";
+
+      const currencyInfo = order.currency && order.currency !== "DOP"
+        ? `\n💱 Moneda: ${order.currency}`
+        : "";
+
       return `
 🛒 *Nuevo Pedido*
 ${customerInfo}
@@ -1475,7 +2017,7 @@ ${items}
 
 Subtotal: ${order.subtotal}
 Envío: ${order.shipping}
-Descuento: ${order.discount}
+Descuento: ${order.discount}${taxInfo}${currencyInfo}
 Total: *${order.total}*
 
 Pago: ${order.paymentMethod || "N/A"}
