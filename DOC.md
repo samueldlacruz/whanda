@@ -1,371 +1,371 @@
-# Whanda — Referencia Completa de API
+# Whanda — Complete API Reference
 
-Tags: `[core]` método esencial del framework, `[conv]` método de conveniencia, `[int]` método interno (puede cambiar sin aviso), `[plugin]` requiere plugin/extensión.
+Tags: `[core]` essential framework method, `[conv]` convenience method, `[int]` internal method (may change without notice), `[plugin]` requires plugin/extension.
 
 ## whanda.js (Core)
 
 ### Constructor
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `new Whanda(config?)` | `[core]` Crear instancia. Config: `{ currency, locale, whatsappNumber, shipping, paymentMethods, deliveryMethods, currencies, regions, storeName }` | `Whanda` |
+| `new Whanda(config?)` | `[core]` Create instance. Config: `{ currency, locale, whatsappNumber, shipping, paymentMethods, deliveryMethods, currencies, regions, storeName }` | `Whanda` |
 
 ### Configuration
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getConfig()` | `[conv]` Copia de la configuración | `Object` |
-| `updateConfig(partial)` | `[conv]` Fusionar config parcial | `void` |
+| `getConfig()` | `[conv]` Copy of the configuration | `Object` |
+| `updateConfig(partial)` | `[conv]` Merge partial config | `void` |
 
 ### Hook System
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `on(hook, fn)` | `[core]` Registrar hook | `void` |
-| `off(hook, fn)` | `[core]` Desregistrar hook | `void` |
-| `async runHooks(hook, payload)` | `[int]` Ejecutar hooks | `Promise<*>` |
+| `on(hook, fn)` | `[core]` Register hook | `void` |
+| `off(hook, fn)` | `[core]` Unregister hook | `void` |
+| `async runHooks(hook, payload)` | `[int]` Run hooks | `Promise<*>` |
 
 ### Products
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setProducts(products)` | `[core]` Reemplazar catálogo | `void` |
-| `getProducts(filter?)` | `[conv]` Productos con filtros `{ category, minPrice, maxPrice, search, sort, order, limit }` | `Object[]` |
-| `getProduct(id)` | `[conv]` Producto por ID | `Object\|null` |
-| `getPrice(id)` | `[conv]` Precio del producto | `number` |
-| `getStock(id)` | `[conv]` Stock del producto | `number` |
-| `getImages(id)` | `[conv]` Imágenes del producto | `string[]` |
-| `getCategory(id)` | `[conv]` Categoría del producto | `string\|null` |
-| `getCategories()` | `[conv]` Categorías únicas | `string[]` |
-| `search(query)` | `[conv]` Buscar por nombre/categoría | `Object[]` |
-| `filterByCategory(category)` | `[conv]` Filtrar por categoría | `Object[]` |
-| `getRelatedProducts(id)` | `[conv]` Productos relacionados | `Object[]` |
-| `getUpsells(id)` | `[conv]` Upsells (más caros) | `Object[]` |
-| `getCrossSells(id)` | `[conv]` Cross-sells (complementarios) | `Object[]` |
-| `getForCart()` | `[conv]` Recomendaciones para el carrito actual | `Object[]` |
+| `setProducts(products)` | `[core]` Replace catalog | `void` |
+| `getProducts(filter?)` | `[conv]` Products with filters `{ category, minPrice, maxPrice, search, sort, order, limit }` | `Object[]` |
+| `getProduct(id)` | `[conv]` Product by ID | `Object\|null` |
+| `getPrice(id)` | `[conv]` Product price | `number` |
+| `getStock(id)` | `[conv]` Product stock | `number` |
+| `getImages(id)` | `[conv]` Product images | `string[]` |
+| `getCategory(id)` | `[conv]` Product category | `string\|null` |
+| `getCategories()` | `[conv]` Unique categories | `string[]` |
+| `search(query)` | `[conv]` Search by name/category | `Object[]` |
+| `filterByCategory(category)` | `[conv]` Filter by category | `Object[]` |
+| `getRelatedProducts(id)` | `[conv]` Related products | `Object[]` |
+| `getUpsells(id)` | `[conv]` Upsells (more expensive) | `Object[]` |
+| `getCrossSells(id)` | `[conv]` Cross-sells (complementary) | `Object[]` |
+| `getForCart()` | `[conv]` Recommendations for current cart | `Object[]` |
 
 ### Cart
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getCart()` | `[conv]` Copia del carrito | `Object[]` |
-| `async addItem(id, qty?)` | `[core]` Agregar al carrito (qty default: 1) | `Promise<void>` |
-| `clearCart()` | `[conv]` Vaciar carrito. Dispara `onCartEmpty` | `void` |
-| `removeCartItem(id)` | `[conv]` Quitar ítem. Dispara `onRemoveItem` | `void` |
-| `updateQuantity(id, qty)` | `[conv]` Actualizar cantidad (0 = quitar) | `void` |
-| `hasCartItem(id)` | `[conv]` Verificar si está en carrito | `boolean` |
-| `getCartItemCount()` | `[conv]` Total de ítems | `number` |
+| `getCart()` | `[conv]` Copy of cart | `Object[]` |
+| `async addItem(id, qty?)` | `[core]` Add to cart (qty default: 1) | `Promise<void>` |
+| `clearCart()` | `[conv]` Empty cart. Fires `onCartEmpty` | `void` |
+| `removeCartItem(id)` | `[conv]` Remove item. Fires `onRemoveItem` | `void` |
+| `updateQuantity(id, qty)` | `[conv]` Update quantity (0 = remove) | `void` |
+| `hasCartItem(id)` | `[conv]` Check if in cart | `boolean` |
+| `getCartItemCount()` | `[conv]` Total items | `number` |
 
 ### Pricing
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getSubtotal()` | `[conv]` Subtotal del carrito | `number` |
-| `getShippingCost()` | `[conv]` Costo de envío calculado | `number` |
-| `getDiscountAmount()` | `[conv]` Monto de descuento | `number` |
-| `getTotal()` | `[conv]` Total (nunca negativo) | `number` |
-| `calculate()` | `[conv]` Desglose: `{ subtotal, shipping, discount, total }` | `Object` |
-| `formatPrice(amount)` | `[conv]` Formatear con moneda/locale | `string` |
+| `getSubtotal()` | `[conv]` Cart subtotal | `number` |
+| `getShippingCost()` | `[conv]` Calculated shipping cost | `number` |
+| `getDiscountAmount()` | `[conv]` Discount amount | `number` |
+| `getTotal()` | `[conv]` Total (never negative) | `number` |
+| `calculate()` | `[conv]` Breakdown: `{ subtotal, shipping, discount, total }` | `Object` |
+| `formatPrice(amount)` | `[conv]` Format with currency/locale | `string` |
 
 ### Coupons
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `addCoupon(coupon)` | `[core]` Registrar cupón | `void` |
-| `getCoupons()` | `[conv]` Todos los cupones | `Object[]` |
-| `validateCoupon(code)` | `[conv]` Verificar si existe | `boolean` |
-| `applyCoupon(code)` | `[conv]` Aplicar cupón activo | `Object` (copia del cupón) |
-| `removeCoupon()` | `[conv]` Quitar cupón activo | `void` |
-| `getActiveCoupon()` | `[conv]` Cupón activo o null | `Object\|null` |
+| `addCoupon(coupon)` | `[core]` Register coupon | `void` |
+| `getCoupons()` | `[conv]` All coupons | `Object[]` |
+| `validateCoupon(code)` | `[conv]` Check if exists | `boolean` |
+| `applyCoupon(code)` | `[conv]` Apply active coupon | `Object` (copy of coupon) |
+| `removeCoupon()` | `[conv]` Remove active coupon | `void` |
+| `getActiveCoupon()` | `[conv]` Active coupon or null | `Object\|null` |
 
 ### Shipping
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getShippingMethods()` | `[conv]` Tipos disponibles | `["fixed","free","per_item"]` |
-| `setShippingMethod(type)` | `[conv]` Establecer tipo | `void` |
-| `isFreeShipping()` | `[conv]` ¿Envío gratis? | `boolean` |
-| `getFreeShippingMin()` | `[conv]` Umbral mínimo | `number\|null` |
-| `setFixedShipping(value)` | `[conv]` Envío fijo | `void` |
-| `setFreeShippingFrom(n)` | `[conv]` Gratis desde n | `void` |
-| `setPerItemShipping(value)` | `[conv]` Costo por ítem | `void` |
+| `getShippingMethods()` | `[conv]` Available types | `["fixed","free","per_item"]` |
+| `setShippingMethod(type)` | `[conv]` Set type | `void` |
+| `isFreeShipping()` | `[conv]` Free shipping? | `boolean` |
+| `getFreeShippingMin()` | `[conv]` Minimum threshold | `number\|null` |
+| `setFixedShipping(value)` | `[conv]` Fixed shipping | `void` |
+| `setFreeShippingFrom(n)` | `[conv]` Free from n | `void` |
+| `setPerItemShipping(value)` | `[conv]` Per-item cost | `void` |
 
 ### Customer
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setCustomerName(name)` | `[conv]` Nombre del cliente | `void` |
-| `setCustomerAddress(address)` | `[conv]` Dirección | `void` |
-| `setCustomerNotes(notes)` | `[conv]` Notas adicionales | `void` |
-| `getCustomer()` | `[conv]` Copia de datos del cliente | `Object` |
+| `setCustomerName(name)` | `[conv]` Customer name | `void` |
+| `setCustomerAddress(address)` | `[conv]` Address | `void` |
+| `setCustomerNotes(notes)` | `[conv]` Additional notes | `void` |
+| `getCustomer()` | `[conv]` Copy of customer data | `Object` |
 
 ### Checkout
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getPaymentMethods()` | `[conv]` Métodos disponibles | `string[]` |
-| `setPaymentMethod(method)` | `[conv]` Establecer pago | `void` |
-| `getDeliveryMethods()` | `[conv]` Métodos de entrega | `string[]` |
-| `setDeliveryMethod(method)` | `[conv]` Establecer entrega | `void` |
-| `validateCheckout()` | `[core]` Validar datos requeridos | `true` (o lanza error) |
-| `preview()` | `[core]` Vista previa de la orden | `Object` |
-| `async createOrder(meta?)` | `[core]` Crear orden | `Promise<Object>` |
+| `getPaymentMethods()` | `[conv]` Available methods | `string[]` |
+| `setPaymentMethod(method)` | `[conv]` Set payment | `void` |
+| `getDeliveryMethods()` | `[conv]` Delivery methods | `string[]` |
+| `setDeliveryMethod(method)` | `[conv]` Set delivery | `void` |
+| `validateCheckout()` | `[core]` Validate required data | `true` (or throws error) |
+| `preview()` | `[core]` Order preview | `Object` |
+| `async createOrder(meta?)` | `[core]` Create order | `Promise<Object>` |
 
 ### Orders
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `getOrder(id)` | `[conv]` Orden por ID | `Object\|null` |
-| `getLastOrder()` | `[conv]` Última orden | `Object\|null` |
-| `listOrders()` | `[conv]` Todas las órdenes | `Object[]` |
-| `updateOrderStatus(id, status)` | `[conv]` Actualizar status | `Object` |
-| `cancelOrder(id)` | `[conv]` Cancelar y eliminar | `Object` |
+| `getOrder(id)` | `[conv]` Order by ID | `Object\|null` |
+| `getLastOrder()` | `[conv]` Last order | `Object\|null` |
+| `listOrders()` | `[conv]` All orders | `Object[]` |
+| `updateOrderStatus(id, status)` | `[conv]` Update status | `Object` |
+| `cancelOrder(id)` | `[conv]` Cancel and remove | `Object` |
 
-Status válidos: `pending`, `confirmed`, `shipped`, `delivered`, `cancelled`
+Valid statuses: `pending`, `confirmed`, `shipped`, `delivered`, `cancelled`
 
 ### Persistence
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `save()` | `[int]` Serializar estado a JSON | `string` |
-| `load(json)` | `[int]` Restaurar desde JSON | `void` |
-| `reset()` | `[conv]` Limpiar carrito, cliente, checkout | `void` |
+| `save()` | `[int]` Serialize state to JSON | `string` |
+| `load(json)` | `[int]` Restore from JSON | `void` |
+| `reset()` | `[conv]` Clear cart, customer, checkout | `void` |
 
 ### Sync
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `async sync(data)` | `[int]` Pasar por hooks before/afterSync | `Promise<*>` |
+| `async sync(data)` | `[int]` Pass through before/afterSync hooks | `Promise<*>` |
 
 ### WhatsApp
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setWhatsAppNumber(number)` | `[core]` Establecer número (7-15 dígitos) | `void` |
-| `registerWhatsAppTemplate(id, fn)` | `[conv]` Registrar template | `void` |
-| `setWhatsAppTemplate(id)` | `[conv]` Seleccionar template activo | `void` |
-| `listWhatsAppTemplates()` | `[conv]` IDs de templates | `string[]` |
-| `getWhatsAppTemplate(id)` | `[conv]` Template por ID | `Object\|null` |
-| `removeWhatsAppTemplate(id)` | `[conv]` Eliminar template (no el default) | `void` |
-| `previewWhatsAppTemplate(id, order)` | `[conv]` Renderizar template | `string` |
-| `async generateMessage(order)` | `[int]` Generar mensaje con hooks | `Promise<string>` |
-| `async generateLink(order)` | `[int]` Generar link wa.me | `Promise<string>` |
-| `async sendToWhatsApp(order)` | `[core]` Generar link con beforeWhatsAppSend hook | `Promise<string>` |
-| `getShareCatalogUrl(options?)` | `[conv]` URL para compartir catálogo completo por WhatsApp | `string` |
-| `getThankYouHtml(options?)` | `[conv]` HTML personalizable para página de agradecimiento | `string` |
+| `setWhatsAppNumber(number)` | `[core]` Set number (7-15 digits) | `void` |
+| `registerWhatsAppTemplate(id, fn)` | `[conv]` Register template | `void` |
+| `setWhatsAppTemplate(id)` | `[conv]` Select active template | `void` |
+| `listWhatsAppTemplates()` | `[conv]` Template IDs | `string[]` |
+| `getWhatsAppTemplate(id)` | `[conv]` Template by ID | `Object\|null` |
+| `removeWhatsAppTemplate(id)` | `[conv]` Delete template (not the default) | `void` |
+| `previewWhatsAppTemplate(id, order)` | `[conv]` Render template | `string` |
+| `async generateMessage(order)` | `[int]` Generate message with hooks | `Promise<string>` |
+| `async generateLink(order)` | `[int]` Generate wa.me link | `Promise<string>` |
+| `async sendToWhatsApp(order)` | `[core]` Generate link with beforeWhatsAppSend hook | `Promise<string>` |
+| `getShareCatalogUrl(options?)` | `[conv]` URL to share full catalog via WhatsApp | `string` |
+| `getThankYouHtml(options?)` | `[conv]` Customizable HTML for thank-you page | `string` |
 
 ### Multi-Currency
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setCurrency(code)` | `[core]` Establecer moneda activa | `void` |
-| `getCurrency()` | `[conv]` Moneda activa actual | `string` |
-| `getExchangeRate(code)` | `[conv]` Tipo de cambio para una moneda | `number` |
-| `convertPrice(basePrice)` | `[conv]` Convertir precio a moneda activa | `number` |
-| `formatPrice(amount, code?)` | `[conv]` Formatear precio con locale | `string` |
+| `setCurrency(code)` | `[core]` Set active currency | `void` |
+| `getCurrency()` | `[conv]` Current active currency | `string` |
+| `getExchangeRate(code)` | `[conv]` Exchange rate for a currency | `number` |
+| `convertPrice(basePrice)` | `[conv]` Convert price to active currency | `number` |
+| `formatPrice(amount, code?)` | `[conv]` Format price with locale | `string` |
 
 Config: `{ currencies: { USD: 1, DOP: 56.5, EUR: 0.92 } }`
 
 ### Multi-Region
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setRegion(code)` | `[core]` Establecer región activa (auto-setea currency) | `void` |
-| `getRegion()` | `[conv]` Código de región activa | `string\|null` |
-| `getTax(productId?)` | `[conv]` Tasa de impuesto (0-1) | `number` |
-| `getTaxName()` | `[conv]` Nombre del impuesto (ej: "ITBIS") | `string` |
-| `getRegionalShippingCost(subtotal?)` | `[conv]` Costo de envío regional | `number` |
+| `setRegion(code)` | `[core]` Set active region (auto-sets currency) | `void` |
+| `getRegion()` | `[conv]` Active region code | `string\|null` |
+| `getTax(productId?)` | `[conv]` Tax rate (0-1) | `number` |
+| `getTaxName()` | `[conv]` Tax name (e.g. "ITBIS") | `string` |
+| `getRegionalShippingCost(subtotal?)` | `[conv]` Regional shipping cost | `number` |
 
 Config: `{ regions: { DO: { tax: { rate: 0.18, name: "ITBIS" }, shipping: { flat: 150, freeFrom: 2000 }, currency: "DOP" } } }`
 
 ### Security
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `_sanitizeString(str)` | `[int]` Escapar HTML entities | `string` |
-| `_sanitizeObject(obj)` | `[int]` Sanitizar recursivamente un objeto | `Object` |
-| `load(jsonString)` | `[int]` Cargar estado con validación de schema | `void` |
+| `_sanitizeString(str)` | `[int]` Escape HTML entities | `string` |
+| `_sanitizeObject(obj)` | `[int]` Recursively sanitize an object | `Object` |
+| `load(jsonString)` | `[int]` Load state with schema validation | `void` |
 
-- `load()` valida JSON y rejects keys desconocidas en config/state
-- `_sanitizeString()` escapa `< > " ' &` para prevenir XSS
+- `load()` validates JSON and rejects unknown keys in config/state
+- `_sanitizeString()` escapes `< > " ' &` to prevent XSS
 
 ### Scalability
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `async loadFromSources(sources)` | `[core]` Cargar productos desde múltiples fuentes | `Promise<Object[]>` |
-| `cacheProducts(ttl?)` | `[conv]` Guardar productos en cache (localStorage) | `void` |
-| `loadProductsFromCache()` | `[conv]` Cargar productos desde cache | `boolean` |
-| `getProductsPaginated(page, pageSize, filters?)` | `[conv]` Productos paginados | `Object` |
-| `createProductIterator(batchSize?)` | `[conv]` Iterador para lazy loading | `Object` |
+| `async loadFromSources(sources)` | `[core]` Load products from multiple sources | `Promise<Object[]>` |
+| `cacheProducts(ttl?)` | `[conv]` Cache products (localStorage) | `void` |
+| `loadProductsFromCache()` | `[conv]` Load products from cache | `boolean` |
+| `getProductsPaginated(page, pageSize, filters?)` | `[conv]` Paginated products | `Object` |
+| `createProductIterator(batchSize?)` | `[conv]` Iterator for lazy loading | `Object` |
 
-`getProductsPaginated()` retorna: `{ products, total, page, pageSize, totalPages, hasNext, hasPrev }`
-`createProductIterator()` retorna: `{ getNextBatch(), hasMore(), reset(), getTotal(), getLoaded() }`
+`getProductsPaginated()` returns: `{ products, total, page, pageSize, totalPages, hasNext, hasPrev }`
+`createProductIterator()` returns: `{ getNextBatch(), hasMore(), reset(), getTotal(), getLoaded() }`
 
-> **Métodos internos de caché** (uso avanzado): `_setCache(key, value, ttl)`, `_getCache(key)`, `_clearCache(key?)`. TTL en segundos.
+> **Internal cache methods** (advanced usage): `_setCache(key, value, ttl)`, `_getCache(key)`, `_clearCache(key?)`. TTL in seconds.
 
 ---
 
 ## whanda-plugins.js (Plugins)
 
-> Requiere `whanda-plugins.min.js` (IIFE) o `initPlugins(Whanda)` (ESM). Todos los métodos son `[plugin]`.
+> Requires `whanda-plugins.min.js` (IIFE) or `initPlugins(Whanda)` (ESM). All methods are `[plugin]`.
 
 ### Downsells
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setDownsell(config)` | Configurar downsell `{ trigger, type, value, message, alternativeProductId }` | `void` |
-| `getDownsell()` | Config actual | `Object\|null` |
-| `clearDownsell()` | Quitar downsell | `void` |
+| `setDownsell(config)` | Configure downsell `{ trigger, type, value, message, alternativeProductId }` | `void` |
+| `getDownsell()` | Current config | `Object\|null` |
+| `clearDownsell()` | Remove downsell | `void` |
 
 ### Seasons
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `createSeason(config)` | Crear temporada `{ id, name, start, end, type, discount, products, couponCode }` | `void` |
-| `getSeasons()` | Todas las temporadas | `Object[]` |
-| `getActiveSeason()` | Temporada activa por fecha | `Object\|null` |
-| `isInSeason(productId)` | ¿Producto en temporada? | `boolean` |
-| `removeSeason(id)` | Eliminar temporada | `void` |
+| `createSeason(config)` | Create season `{ id, name, start, end, type, discount, products, couponCode }` | `void` |
+| `getSeasons()` | All seasons | `Object[]` |
+| `getActiveSeason()` | Active season by date | `Object\|null` |
+| `isInSeason(productId)` | Product in season? | `boolean` |
+| `removeSeason(id)` | Remove season | `void` |
 
 ### Urgency
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setProductUrgency(id, config)` | Configurar urgencia `{ lowStock, countdown, badge }` | `void` |
-| `getUrgency(id)` | Datos de urgencia con campos computados | `Object\|null` |
-| `clearProductUrgency(id)` | Quitar urgencia | `void` |
-| `getLowStockProducts()` | Productos con stock bajo | `Object[]` |
+| `setProductUrgency(id, config)` | Configure urgency `{ lowStock, countdown, badge }` | `void` |
+| `getUrgency(id)` | Urgency data with computed fields | `Object\|null` |
+| `clearProductUrgency(id)` | Remove urgency | `void` |
+| `getLowStockProducts()` | Low stock products | `Object[]` |
 
 ### Bundles
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `createBundle(config)` | Crear bundle `{ id, name, products, type, discount }` | `void` |
-| `getBundles()` | Todos los bundles | `Object[]` |
-| `getBundle(id)` | Bundle por ID | `Object\|null` |
-| `async addBundle(id, qty?)` | Agregar bundle al carrito | `Promise<void>` |
-| `removeBundle(id)` | Quitar bundle del carrito | `void` |
-| `deleteBundle(id)` | Eliminar bundle | `void` |
+| `createBundle(config)` | Create bundle `{ id, name, products, type, discount }` | `void` |
+| `getBundles()` | All bundles | `Object[]` |
+| `getBundle(id)` | Bundle by ID | `Object\|null` |
+| `async addBundle(id, qty?)` | Add bundle to cart | `Promise<void>` |
+| `removeBundle(id)` | Remove bundle from cart | `void` |
+| `deleteBundle(id)` | Delete bundle | `void` |
 
-`products` acepta: `["id1", "id2"]` o `[{ productId: "id1", quantity: 1 }]`
+`products` accepts: `["id1", "id2"]` or `[{ productId: "id1", quantity: 1 }]`
 
 ### CRO (Headless)
 
-> CRO es headless — provee datos, tú renderizas la UI.
+> CRO is headless — it provides data, you render the UI.
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `setCRO(config)` | Configurar CRO `{ freeShippingBar, freeShippingGoal, lowStockAlert, recentlyViewed, socialProof, exitIntent, exitMessage, exitDiscount }` | `void` |
-| `getCROData()` | Todos los datos CRO | `Object` |
-| `trackProductView(id)` | Registrar vista de producto | `void` |
-| `getRecentlyViewed()` | Productos vistos recientemente | `Object[]` |
-| `getSocialProof(id)` | Datos de prueba social | `Object\|null` |
-| `checkFreeShippingProgress()` | Progreso de envío gratis | `{ current, goal, remaining, qualifies, progress }` |
+| `setCRO(config)` | Configure CRO `{ freeShippingBar, freeShippingGoal, lowStockAlert, recentlyViewed, socialProof, exitIntent, exitMessage, exitDiscount }` | `void` |
+| `getCROData()` | All CRO data | `Object` |
+| `trackProductView(id)` | Track product view | `void` |
+| `getRecentlyViewed()` | Recently viewed products | `Object[]` |
+| `getSocialProof(id)` | Social proof data | `Object\|null` |
+| `checkFreeShippingProgress()` | Free shipping progress | `{ current, goal, remaining, qualifies, progress }` |
 
 ---
 
 ## whanda-extensions.js (Extensions)
 
-> Requiere `whanda-extensions.min.js` (IIFE) o `initExtensions(Whanda)` (ESM). Todos los métodos son `[plugin]`.
+> Requires `whanda-extensions.min.js` (IIFE) or `initExtensions(Whanda)` (ESM). All methods are `[plugin]`.
 
-| Método | Descripción | Retorna |
+| Method | Description | Returns |
 |--------|-------------|---------|
-| `exportOrders()` | Exportar órdenes como CSV | `string` |
+| `exportOrders()` | Export orders as CSV | `string` |
 
 ---
 
 ## whanda-sheets.js (Google Sheets)
 
-> Disponible como `import { loadFromSheets } from "whanda/sheets"` (ESM) o `Whanda.loadFromSheets()` (IIFE). Todos los métodos son `[plugin]`.
+> Available as `import { loadFromSheets } from "whanda/sheets"` (ESM) or `Whanda.loadFromSheets()` (IIFE). All methods are `[plugin]`.
 
-| Función | Descripción | Retorna |
-|---------|-------------|---------|
-| `async loadFromSheets(whanda, options)` | Cargar productos desde Google Sheets | `Promise<Object[]>` |
-| `parseCSV(text)` | Parsear CSV a productos | `Object[]` |
-| `buildGoogleSheetsCsvUrl(url)` | Convertir URL de Sheets a CSV export | `string` |
+| Function | Description | Returns |
+|----------|-------------|---------|
+| `async loadFromSheets(whanda, options)` | Load products from Google Sheets | `Promise<Object[]>` |
+| `parseCSV(text)` | Parse CSV to products | `Object[]` |
+| `buildGoogleSheetsCsvUrl(url)` | Convert Sheets URL to CSV export | `string` |
 
-Options para `loadFromSheets`:
-- `sheetUrl` — URL de Google Sheets (hoja pública)
-- `proxyUrl` — URL de proxy serverless (recomendado para producción)
+Options for `loadFromSheets`:
+- `sheetUrl` — Google Sheets URL (public sheet)
+- `proxyUrl` — Serverless proxy URL (recommended for production)
 
 ---
 
 ## Hooks
 
-| Hook | Payload | Cuándo se dispara |
-|------|---------|-------------------|
-| `beforeAddToCart` | `{ productId, quantity }` | Antes de agregar ítem |
-| `afterAddToCart` | `cart items` | Después de agregar ítem |
-| `afterCartChange` | `cart items` | Después de cualquier cambio de carrito |
-| `beforeCheckout` | `meta` | Antes de crear orden |
-| `afterCheckout` | `order` | Después de crear orden |
-| `beforeWhatsAppSend` | `order` | Antes de generar link |
-| `beforeGenerateWhatsApp` | `message` | Antes de renderizar template |
-| `afterGenerateWhatsApp` | `message` | Después de renderizar template |
-| `onRemoveItem` | `{ productId, cart }` | Al quitar ítem del carrito |
-| `onCartEmpty` | `{ cart }` | Al vaciar el carrito |
-| `beforeSync` | `data` | Antes de sync |
-| `afterSync` | `data` | Después de sync |
+| Hook | Payload | Fires when |
+|------|---------|------------|
+| `beforeAddToCart` | `{ productId, quantity }` | Before adding item |
+| `afterAddToCart` | `cart items` | After adding item |
+| `afterCartChange` | `cart items` | After any cart change |
+| `beforeCheckout` | `meta` | Before creating order |
+| `afterCheckout` | `order` | After creating order |
+| `beforeWhatsAppSend` | `order` | Before generating link |
+| `beforeGenerateWhatsApp` | `message` | Before rendering template |
+| `afterGenerateWhatsApp` | `message` | After rendering template |
+| `onRemoveItem` | `{ productId, cart }` | When removing item from cart |
+| `onCartEmpty` | `{ cart }` | When emptying cart |
+| `beforeSync` | `data` | Before sync |
+| `afterSync` | `data` | After sync |
 
-Hooks pueden abortar retornando `{ abort: true, message: "..." }`.
+Hooks can abort by returning `{ abort: true, message: "..." }`.
 
 ---
 
 ## Error Codes (Core)
 
-| Código | Mensaje (ES) |
-|--------|-------------|
-| W001 | search() requiere un texto de búsqueda |
-| W002 | Producto no encontrado |
-| W003 | La cantidad debe ser un número entero positivo |
-| W004 | Stock insuficiente |
-| W005 | La cantidad debe ser un número entero no negativo |
-| W006 | Producto no encontrado en el carrito |
-| W007 | El código del cupón debe ser un texto |
-| W008 | Cupón inválido |
-| W009 | El cupón ha expirado |
-| W010 | El cupón alcanzó su límite de usos |
-| W011 | Monto mínimo de orden no alcanzado |
-| W012 | El valor de envío debe ser un número no negativo |
-| W013 | El umbral de envío gratis debe ser un número positivo |
-| W014 | El envío por ítem debe ser un número no negativo |
-| W015 | Método de envío inválido |
-| W016 | Método de pago inválido |
-| W017 | Método de entrega inválido |
-| W018 | El carrito está vacío |
-| W019 | El nombre del cliente es requerido |
-| W020 | La dirección del cliente es requerida |
-| W021 | El método de pago es requerido |
-| W022 | El método de entrega es requerido |
-| W023 | Estado inválido |
-| W024 | Orden no encontrada |
-| W025 | Número de WhatsApp no configurado |
-| W026 | El número de WhatsApp debe ser texto o número |
-| W027 | El número de WhatsApp debe tener entre 7 y 15 dígitos |
-| W028 | La plantilla debe ser una función |
-| W029 | Plantilla no encontrada |
-| W030 | No se puede eliminar la plantilla por defecto |
-| W031 | El ID de la plantilla debe ser un texto no vacío |
-| W032 | Plantilla activa no encontrada |
-| W033 | El cupón debe tener un 'code' válido |
-| W034 | El cupón debe tener un 'amount' numérico |
-| W035 | setProducts() requiere un arreglo |
-| W036 | debe ser un número positivo |
-| W037 | Moneda no soportada |
-| W038 | Región no soportada |
-| W039 | Hook cancelado |
-| W040 | JSON inválido en load() |
-| W041 | load() espera un objeto JSON |
+| Code | Message |
+|------|---------|
+| W001 | search() requires search text |
+| W002 | Product not found |
+| W003 | Quantity must be a positive integer |
+| W004 | Insufficient stock |
+| W005 | Quantity must be a non-negative integer |
+| W006 | Product not found in cart |
+| W007 | Coupon code must be a string |
+| W008 | Invalid coupon |
+| W009 | Coupon has expired |
+| W010 | Coupon reached its usage limit |
+| W011 | Minimum order amount not reached |
+| W012 | Shipping value must be a non-negative number |
+| W013 | Free shipping threshold must be a positive number |
+| W014 | Per-item shipping must be a non-negative number |
+| W015 | Invalid shipping method |
+| W016 | Invalid payment method |
+| W017 | Invalid delivery method |
+| W018 | Cart is empty |
+| W019 | Customer name is required |
+| W020 | Customer address is required |
+| W021 | Payment method is required |
+| W022 | Delivery method is required |
+| W023 | Invalid status |
+| W024 | Order not found |
+| W025 | WhatsApp number not configured |
+| W026 | WhatsApp number must be a string or number |
+| W027 | WhatsApp number must be between 7 and 15 digits |
+| W028 | Template must be a function |
+| W029 | Template not found |
+| W030 | Cannot delete the default template |
+| W031 | Template ID must be a non-empty string |
+| W032 | Active template not found |
+| W033 | Coupon must have a valid 'code' |
+| W034 | Coupon must have a numeric 'amount' |
+| W035 | setProducts() requires an array |
+| W036 | must be a positive number |
+| W037 | Unsupported currency |
+| W038 | Unsupported region |
+| W039 | Hook cancelled |
+| W040 | Invalid JSON in load() |
+| W041 | load() expects a JSON object |
 
 ## Error Codes (Plugins)
 
-| Código | Mensaje (ES) |
-|--------|-------------|
-| W100 | Bundle requiere id, name, y products |
-| W101 | Bundle no encontrado |
-| W102 | Season requiere id, name, start, y end |
-| W103 | Downsell requiere un discount numérico positivo |
-| W104 | Urgency requiere al menos uno de: lowStock, deadline, o badge |
-| W105 | Las fechas de season deben ser válidas y start debe ser anterior a end |
-| W106 | Ya existe un elemento con ese ID |
+| Code | Message |
+|------|---------|
+| W100 | Bundle requires id, name, and products |
+| W101 | Bundle not found |
+| W102 | Season requires id, name, start, and end |
+| W103 | Downsell requires a positive numeric discount |
+| W104 | Urgency requires at least one of: lowStock, deadline, or badge |
+| W105 | Season dates must be valid and start must be before end |
+| W106 | Element with that ID already exists |

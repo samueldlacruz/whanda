@@ -1,25 +1,25 @@
-# Whanda - Guía de Uso para AI Agents
+# Whanda - Usage Guide for AI Agents
 
-> Para documentación completa de todos los métodos, ver [DOC.md](./DOC.md)
+> For complete documentation of all methods, see [DOC.md](./DOC.md)
 
-## Qué es Whanda
+## What is Whanda
 
-Framework headless para construir tiendas de productos con checkout por WhatsApp.
+Headless framework for building product catalogs with WhatsApp checkout.
 
-**Flujo:** Catálogo → Carrito → WhatsApp → Cierre manual
+**Flow:** Catalog → Cart → WhatsApp → Manual close
 
-**No es e-commerce tradicional.** No hay pasarela de pago, no hay cuentas de usuario, no hay backend. Solo un catálogo, un carrito, y un link de WhatsApp.
+**It's not traditional e-commerce.** No payment gateway, no user accounts, no backend. Just a catalog, a cart, and a WhatsApp link.
 
 ---
 
-## Arquitectura
+## Architecture
 
-Whanda se divide en 3 archivos:
-- **whanda.min.js** — Core (carrito, pricing, WhatsApp)
-- **whanda-plugins.min.js** — Features opcionales (temporadas, urgency, bundles, downsells, CRO)
-- **whanda-extensions.min.js** — Métodos poco usados (exportOrders)
+Whanda is split into 3 files:
+- **whanda.min.js** — Core (cart, pricing, WhatsApp)
+- **whanda-plugins.min.js** — Optional features (seasons, urgency, bundles, downsells, CRO)
+- **whanda-extensions.min.js** — Infrequently used methods (exportOrders)
 
-Para HTML, incluir los script tags en orden. Para ESM:
+For HTML, include the script tags in order. For ESM:
 ```js
 import { Whanda } from "whanda";
 import { initPlugins } from "whanda/plugins";
@@ -28,7 +28,7 @@ initPlugins(Whanda);
 
 ---
 
-## Inclusión Rápida
+## Quick Setup
 
 ### En HTML
 ```html
@@ -36,7 +36,7 @@ initPlugins(Whanda);
 <script src="whanda-plugins.min.js"></script>
 ```
 
-### En JavaScript (ES Module)
+### In JavaScript (ES Module)
 ```js
 import { Whanda } from "whanda";
 import { initPlugins } from "whanda/plugins";
@@ -45,9 +45,9 @@ initPlugins(Whanda);
 
 ---
 
-## API Esencial (15 métodos para empezar)
+## Essential API (15 methods to get started)
 
-### 1. Configurar la instancia
+### 1. Configure the instance
 ```js
 const w = new Whanda({
   currency: "DOP",
@@ -56,7 +56,7 @@ const w = new Whanda({
 });
 ```
 
-### 2. Cargar productos
+### 2. Load products
 ```js
 w.setProducts([
   {
@@ -73,67 +73,67 @@ w.setProducts([
 ]);
 ```
 
-### 3. Agregar al carrito
+### 3. Add to cart
 ```js
-await w.addItem("1", 2);  // producto "1", cantidad 2
+await w.addItem("1", 2);  // product "1", quantity 2
 ```
 
-### 4. Gestionar el carrito
+### 4. Manage the cart
 ```js
 w.getCart();              // → [{ productId, quantity, price, name }]
-w.getCartItemCount();          // → número total de ítems
-w.getSubtotal();               // → suma de price × quantity
-w.updateQuantity("1", 3);      // cambiar cantidad
-w.removeCartItem("1");         // quitar ítem
-w.clearCart();                 // vaciar todo
+w.getCartItemCount();          // → total number of items
+w.getSubtotal();               // → sum of price × quantity
+w.updateQuantity("1", 3);      // change quantity
+w.removeCartItem("1");         // remove item
+w.clearCart();                 // clear all
 w.hasCartItem("1");            // → true/false
 ```
 
-### 5. Datos del cliente
+### 5. Customer data
 ```js
 w.setCustomerName("Juan Pérez");
 w.setCustomerAddress("Calle 123, Santo Domingo");
 w.setCustomerNotes("Timbre azul, apartamento 4B");
 ```
 
-### 6. Métodos de pago y entrega
+### 6. Payment and delivery methods
 ```js
-w.setPaymentMethod("Efectivo");        // o "Transferencia", "Tarjeta"
-w.setDeliveryMethod("Home Delivery");  // o "In-store Pickup"
+w.setPaymentMethod("Efectivo");        // or 'Transfer', 'Card'
+w.setDeliveryMethod("Home Delivery");  // or 'In-store Pickup'
 ```
 
-### 7. Crear orden
+### 7. Create order
 ```js
 const order = await w.createOrder();
 // order = { id, items, subtotal, shipping, discount, total, customer, status, ... }
 ```
 
-### 8. Enviar por WhatsApp
+### 8. Send via WhatsApp
 ```js
 const link = await w.sendToWhatsApp(order);
 window.open(link, "_blank");
 ```
 
-### 9. Cupones
+### 9. Coupons
 ```js
 w.addCoupon({ code: "AHORRA10", amount: 10, type: "percent" });
 w.addCoupon({ code: "FIJO500", amount: 500, type: "flat", minOrder: 2000 });
 w.applyCoupon("AHORRA10");
-w.getActiveCoupon();  // → coupon object o null
+w.getActiveCoupon();  // → coupon object or null
 w.removeCoupon();
 ```
 
-### 10. Envío
+### 10. Shipping
 ```js
-w.setFixedShipping(200);           // envío fijo
-w.setFreeShippingFrom(2000);      // gratis desde $2000
-w.setPerItemShipping(50);         // $50 por ítem
-w.getShippingCost();               // → costo calculado
+w.setFixedShipping(200);           // fixed shipping
+w.setFreeShippingFrom(2000);      // free from $2000
+w.setPerItemShipping(50);         // $50 per item
+w.getShippingCost();               // → calculated cost
 w.isFreeShipping();                // → true/false
 ```
 
-### 11. Temporadas
-> ⚠️ Requiere whanda-plugins.min.js
+### 11. Seasons
+> ⚠️ Requires whanda-plugins.min.js
 ```js
 w.createSeason({
   id: "navidad",
@@ -143,12 +143,12 @@ w.createSeason({
   type: "promotion",
   discount: 15
 });
-w.getActiveSeason();   // → season object o null
+w.getActiveSeason();   // → season object or null
 w.isInSeason("1");     // → true/false
 ```
 
-### 12. Urgencia y escasez
-> ⚠️ Requiere whanda-plugins.min.js
+### 12. Urgency & scarcity
+> ⚠️ Requires whanda-plugins.min.js
 ```js
 w.setProductUrgency("1", {
   lowStock: 3,
@@ -159,7 +159,7 @@ w.getLowStockProducts();  // → [{ product, urgency }]
 ```
 
 ### 13. Bundles
-> ⚠️ Requiere whanda-plugins.min.js
+> ⚠️ Requires whanda-plugins.min.js
 ```js
 w.createBundle({
   id: "combo-ropa",
@@ -168,12 +168,12 @@ w.createBundle({
   type: "percent",
   discount: 15
 });
-w.addBundle("combo-ropa", 1);  // agrega ambos productos al carrito
+w.addBundle("combo-ropa", 1);  // adds both products to cart
 w.getBundles();                 // → [bundle objects]
 ```
 
-### 14. CRO (Optimización de Conversión)
-> ⚠️ Requiere whanda-plugins.min.js. CRO es headless — provee datos, tú renderizas la UI.
+### 14. CRO (Conversion Rate Optimization)
+> ⚠️ Requires whanda-plugins.min.js. CRO is headless — it provides data, you render the UI.
 ```js
 w.setCRO({
   freeShippingBar: true,
@@ -186,38 +186,38 @@ w.setCRO({
 });
 w.getCROData();              // → { freeShippingProgress, lowStockProducts, ... }
 w.checkFreeShippingProgress(); // → { current, goal, remaining, qualifies, progress }
-w.trackProductView("1");     // registrar vista
+w.trackProductView("1");     // track view
 w.getRecentlyViewed();       // → [products]
 ```
 
-### 15. Persistencia
+### 15. Persistence
 ```js
 const saved = w.save();     // → JSON string
-w.load(saved);              // restaurar desde JSON
-w.reset();                  // limpiar carrito, cliente, checkout
+w.load(saved);              // restore from JSON
+w.reset();                  // clear cart, customer, checkout
 ```
 
 ---
 
-## Estructura de Producto
+## Product Structure
 
 ```js
 {
-  id: "string|number",      // ID único (requerido)
-  name: "string",           // Nombre (requerido)
-  price: number,            // Precio (requerido)
-  stock: number,            // Stock (null = ilimitado)
-  category: "string",       // Categoría (requerido)
-  image: "string",          // URL de imagen
-  relatedIds: ["id", ...],  // Productos relacionados
-  upsellIds: ["id", ...],   // Upsells (productos más caros)
-  crossSellIds: ["id", ...] // Cross-sells (complementarios)
+  id: "string|number",      // Unique ID (required)
+  name: "string",           // Name (required)
+  price: number,            // Price (required)
+  stock: number,            // Stock (null = unlimited)
+  category: "string",       // Category (required)
+  image: "string",          // Image URL
+  relatedIds: ["id", ...],  // Related products
+  upsellIds: ["id", ...],   // Upsells (more expensive products)
+  crossSellIds: ["id", ...] // Cross-sells (complementary)
 }
 ```
 
 ---
 
-## Estructura de Orden
+## Order Structure
 
 ```js
 {
@@ -238,7 +238,7 @@ w.reset();                  // limpiar carrito, cliente, checkout
 
 ---
 
-## Hooks Disponibles
+## Available Hooks
 
 ```js
 w.on("beforeAddToCart", (payload) => { /* payload: { productId, quantity } */ });
@@ -253,31 +253,31 @@ w.on("onCartEmpty", (data) => { /* data: { cart } */ });
 w.on("onRemoveItem", (data) => { /* data: { productId, cart } */ });
 ```
 
-Para desuscribir: `w.off("hookName", fn)`
+To unsubscribe: `w.off("hookName", fn)`
 
 ---
 
-## Template de WhatsApp
+## WhatsApp Template
 
 ```js
-// Usar template personalizado
+// Use custom template
 w.registerWhatsAppTemplate("minimo", (order) => {
   return `Pedido: ${order.items.map(i => i.name).join(", ")}\nTotal: $${order.total}`;
 });
 w.setWhatsAppTemplate("minimo");
 
-// Templates disponibles
+// Available templates
 w.listWhatsAppTemplates();  // → ["default", "minimo"]
 ```
 
 ---
 
-## Ejemplo Completo (HTML mínimo)
+## Complete Example (minimal HTML)
 
 ```html
 <!DOCTYPE html>
 <html>
-<head><title>Tienda</title></head>
+<head><title>Store</title></head>
 <body>
   <div id="app"></div>
   <script src="whanda.min.js"></script>
@@ -288,7 +288,7 @@ w.listWhatsAppTemplates();  // → ["default", "minimo"]
       { id: "1", name: "Producto", price: 1000, stock: 10, category: "Cat", image: "img.jpg" }
     ]);
     document.getElementById("app").innerHTML = w.getProducts().map(p =>
-      `<div><h3>${p.name}</h3><p>$${p.price}</p><button onclick="w.addItem('${p.id}')">Agregar</button></div>
+      `<div><h3>${p.name}</h3><p>$${p.price}</p><button onclick="w.addItem('${p.id}')">Add</button></div>
     `).join("");
   </script>
 </body>
@@ -299,7 +299,7 @@ w.listWhatsAppTemplates();  // → ["default", "minimo"]
 
 ## Extensions
 
-> ⚠️ Requiere whanda-extensions.min.js
+> ⚠️ Requires whanda-extensions.min.js
 
 ```html
 <script src="whanda.min.js"></script>
@@ -307,45 +307,45 @@ w.listWhatsAppTemplates();  // → ["default", "minimo"]
 ```
 
 ```js
-w.exportOrders();  // → exportar órdenes
+w.exportOrders();  // → export orders
 ```
 
 ---
 
 ## Google Sheets Adapter
 
-Carga productos desde una hoja de Google Sheets sin backend.
+Load products from a Google Sheet without a backend.
 
-### Importar
+### Import
 
 ```js
 import { loadFromSheets, parseCSV, buildGoogleSheetsCsvUrl } from "whanda/sheets";
 ```
 
-### Formato del CSV
+### CSV Format
 
-Primera fila = headers (case-insensitive):
+First row = headers (case-insensitive):
 
-| Columna | Requerida | Tipo | Descripción |
+| Column | Required | Type | Description |
 |---------|-----------|------|-------------|
-| `id` | Sí | string | ID único del producto |
-| `name` | Sí | string | Nombre |
-| `price` | Sí | number | Precio |
-| `stock` | Sí | number | Stock (0 = sin stock) |
-| `category` | Sí | string | Categoría |
-| `image` | Sí | string | URL de imagen |
-| `relatedIds` | No | string | IDs separados por comas |
-| `upsellIds` | No | string | IDs separados por comas |
-| `crossSellIds` | No | string | IDs separados por comas |
+| `id` | Yes | string | Product unique ID |
+| `name` | Yes | string | Name |
+| `price` | Yes | number | Price |
+| `stock` | Yes | number | Stock (0 = out of stock) |
+| `category` | Yes | string | Category |
+| `image` | Yes | string | Image URL |
+| `relatedIds` | No | string | Comma-separated IDs |
+| `upsellIds` | No | string | Comma-separated IDs |
+| `crossSellIds` | No | string | Comma-separated IDs |
 
-Ejemplo de CSV:
+CSV example:
 ```
 id,name,price,stock,category,image,relatedIds
 1,Camisa Azul,1200,25,Ropa,camisa.jpg,2,3
 2,Pantalón Negro,2500,15,Ropa,pantalon.jpg,1
 ```
 
-### Carga directa (hoja pública)
+### Direct loading (public sheet)
 
 ```js
 const w = new Whanda({ whatsappNumber: "1234567890" });
@@ -354,13 +354,13 @@ await loadFromSheets(w, {
   sheetUrl: "https://docs.google.com/spreadsheets/d/SHEET_ID/edit?gid=0"
 });
 
-// Productos cargados automáticamente
+// Products loaded automatically
 w.getProducts(); // → [{ id, name, price, ... }]
 ```
 
-### Carga con proxy (producción)
+### Proxy loading (production)
 
-Para no exponer la URL de la hoja:
+To avoid exposing the sheet URL:
 
 ```js
 await loadFromSheets(w, {
@@ -368,21 +368,21 @@ await loadFromSheets(w, {
 });
 ```
 
-El proxy debe retornar CSV (`text/csv`) o JSON:
+The proxy must return CSV (`text/csv`) or JSON:
 - `{ csv: "id,name,...\n1,Camisa,..." }`
 - `{ products: [{ id: "1", name: "Camisa", ... }] }`
 
-Ver `examples/vercel-proxy/` para ejemplo completo con Vercel.
+See `examples/vercel-proxy/` for a complete Vercel example.
 
-### Funciones auxiliares
+### Helper functions
 
 ```js
 import { parseCSV, buildGoogleSheetsCsvUrl } from "whanda/sheets";
 
-// Parsear CSV a productos (sin cargar en Whanda)
+// Parse CSV to products (without loading into Whanda)
 const products = parseCSV(csvText);
 
-// Convertir URL de Sheets a URL de exportación CSV
+// Convert Sheets URL to CSV export URL
 const csvUrl = buildGoogleSheetsCsvUrl("https://docs.google.com/spreadsheets/d/ABC/edit?gid=0");
 // → "https://docs.google.com/spreadsheets/d/ABC/export?format=csv&gid=0"
 ```
