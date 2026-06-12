@@ -1,4 +1,7 @@
-# Whanda
+<div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+  <img src="./landing/logo.png" alt="Whanda Logo" width="100" />
+  <h1>Whanda</h1>
+</div>
 
 **Headless Catalog + WhatsApp Checkout**
 
