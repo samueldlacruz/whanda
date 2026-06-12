@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentación — Whanda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            purple: {
+              50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe',
+              400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7e22ce',
+              800: '#6b21a8', 900: '#581c87'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .code-block { background: #09090b; }
+    .code-block code { color: #fafafa; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .code-block .kw { color: #c084fc; }
+    .code-block .str { color: #a78bfa; }
+    .code-block .num { color: #e879f9; }
+    .code-block .cm { color: #52525b; }
+    .code-block .fn { color: #f0abfc; }
+    .toc-link { border-left: 2px solid transparent; transition: all 0.15s; }
+    .toc-link.active { color: #000; font-weight: 600; border-left-color: #9333ea; }
+    .method-table code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+  </style>
+</head>
+<body class="bg-white text-neutral-900 antialiased">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full bg-white/70 backdrop-blur-xl z-50 border-b border-neutral-100">
+    <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <img src="../logo.png" alt="Whanda" class="h-10 w-10 object-contain">
+        <span class="text-base font-semibold tracking-tight">Whanda</span>
+        <span class="text-neutral-300 font-normal mx-1">/</span>
+        <span class="text-neutral-400 font-normal text-sm">Documentación</span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-[13px] font-medium text-neutral-500">
+        <a href="index.html" class="hover:text-neutral-900 transition">Inicio</a>
+        <a href="examples.html" class="hover:text-neutral-900 transition">Ejemplos</a>
+        <span class="text-neutral-200">|</span>
+        <a href="../docs.html" class="hover:text-neutral-900 transition text-xs font-semibold border border-neutral-200 px-2 py-0.5 rounded">EN</a>
+        <a href="https://github.com/samueldlacruz/whanda" target="_blank" class="inline-flex items-center gap-1.5 bg-neutral-900 text-white px-3.5 py-1.5 rounded-lg hover:bg-neutral-800 transition text-xs">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-14 flex">
+
+    <!-- Sidebar -->
+    <aside class="hidden lg:block fixed top-14 left-0 w-60 h-[calc(100vh-3.5rem)] overflow-y-auto border-r border-neutral-100 bg-white p-5">
+      <p class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">Empezando</p>
+      <ul class="space-y-0.5 mb-6">
+        <li><a href="#install" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Instalación</a></li>
+        <li><a href="#quick-start" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Empezar rápido</a></li>
+        <li><a href="#quick-start-ai" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Empezar rápido con AI</a></li>
+      </ul>
+      <p class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">API Core</p>
+      <ul class="space-y-0.5 mb-6">
+        <li><a href="#constructor" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Constructor</a></li>
+        <li><a href="#products" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Productos</a></li>
+        <li><a href="#cart" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Carrito</a></li>
+        <li><a href="#pricing" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Precios</a></li>
+        <li><a href="#coupons" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Cupones</a></li>
+        <li><a href="#shipping" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Envío</a></li>
+        <li><a href="#customer" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Cliente</a></li>
+        <li><a href="#checkout" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Checkout</a></li>
+        <li><a href="#orders" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Pedidos</a></li>
+        <li><a href="#whatsapp" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">WhatsApp</a></li>
+        <li><a href="#multi-currency" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Multi-Moneda</a></li>
+        <li><a href="#multi-region" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Multi-Región</a></li>
+        <li><a href="#hooks" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Hooks</a></li>
+        <li><a href="#security" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Seguridad</a></li>
+        <li><a href="#scalability" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Escalabilidad</a></li>
+        <li><a href="#persistence" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Persistencia</a></li>
+      </ul>
+      <p class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">Plugins</p>
+      <ul class="space-y-0.5 mb-6">
+        <li><a href="#plugin-seasons" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Temporadas</a></li>
+        <li><a href="#plugin-urgency" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Urgencia</a></li>
+        <li><a href="#plugin-bundles" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Paquetes</a></li>
+        <li><a href="#plugin-downsells" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Downsells</a></li>
+        <li><a href="#plugin-cro" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">CRO</a></li>
+      </ul>
+      <p class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">Adaptadores</p>
+      <ul class="space-y-0.5 mb-6">
+        <li><a href="#sheets" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Google Sheets</a></li>
+        <li><a href="#extensions" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Extensiones</a></li>
+      </ul>
+      <p class="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">Referencia</p>
+      <ul class="space-y-0.5">
+        <li><a href="#error-codes" class="toc-link block text-[13px] text-neutral-500 hover:text-neutral-900 py-1 pl-3 transition">Códigos de Error</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 min-w-0 lg:ml-60">
+
+      <!-- Install -->
+      <section id="install" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h1 class="text-3xl font-bold tracking-tight mb-2">Documentación</h1>
+        <p class="text-neutral-400 text-sm mb-8">Referencia completa de la API. Etiquetas: <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">[core]</code> esencial, <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">[conv]</code> conveniencia, <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">[plugin]</code> requiere plugin.</p>
+
+        <h2 class="text-xl font-bold mb-4">Instalación</h2>
+        <p class="text-neutral-500 text-sm mb-4">No requiere npm. Solo copia los archivos desde <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">dist/</code> a tu proyecto.</p>
+
+        <div class="flex flex-wrap gap-3 mb-6">
+          <a href="../../dist/whanda.min.js" download class="inline-flex items-center gap-2 bg-neutral-900 text-white text-xs font-medium px-4 py-2 rounded-lg hover:bg-neutral-800 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"/></svg>
+            whanda.min.js
+            <span class="text-white/40">~26KB</span>
+          </a>
+          <a href="../../dist/whanda-plugins.min.js" download class="inline-flex items-center gap-2 bg-white text-neutral-700 text-xs font-medium px-4 py-2 rounded-lg border border-neutral-200 hover:border-neutral-300 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"/></svg>
+            whanda-plugins.min.js
+            <span class="text-neutral-400">~4KB</span>
+          </a>
+          <a href="../../dist/whanda.esm.min.js" download class="inline-flex items-center gap-2 bg-white text-neutral-700 text-xs font-medium px-4 py-2 rounded-lg border border-neutral-200 hover:border-neutral-300 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4m4-5l5 5 5-5m-5 5V3"/></svg>
+            whanda.esm.min.js
+            <span class="text-neutral-400">~31KB</span>
+          </a>
+        </div>
+
+        <div class="code-block rounded-lg p-4 mb-6 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="cm">&lt;!-- Core (~26KB) --&gt;</span>
+&lt;script src=<span class="str">"whanda.min.js"</span>&gt;&lt;/script&gt;
+
+<span class="cm">&lt;!-- Plugins opcionales (~4KB) --&gt;</span>
+&lt;script src=<span class="str">"whanda-plugins.min.js"</span>&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <h3 class="text-sm font-semibold mb-3">ES Module</h3>
+        <div class="code-block rounded-lg p-4 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="kw">import</span> { Whanda } <span class="kw">from</span> <span class="str">"./whanda.esm.min.js"</span>;
+<span class="kw">import</span> { initPlugins } <span class="kw">from</span> <span class="str">"./whanda.esm.min.js"</span>;
+
+<span class="fn">initPlugins</span>(Whanda);</code></pre>
+        </div>
+      </section>
+
+      <!-- Quick Start -->
+      <section id="quick-start" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Empezar rápido</h2>
+        <div class="code-block rounded-lg p-4 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="kw">const</span> w = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"1234567890"</span> });
+
+w.<span class="fn">setProducts</span>([
+  { id: <span class="str">"1"</span>, name: <span class="str">"Camiseta"</span>, price: <span class="num">1200</span>, stock: <span class="num">25</span>, category: <span class="str">"Ropa"</span>, image: <span class="str">"camiseta.jpg"</span> }
+]);
+
+<span class="kw">await</span> w.<span class="fn">addItem</span>(<span class="str">"1"</span>);
+w.<span class="fn">setCustomerName</span>(<span class="str">"Juan"</span>);
+w.<span class="fn">setCustomerAddress</span>(<span class="str">"Calle Principal 123"</span>);
+w.<span class="fn">setPaymentMethod</span>(<span class="str">"Efectivo"</span>);
+w.<span class="fn">setDeliveryMethod</span>(<span class="str">"Entrega a domicilio"</span>);
+
+<span class="kw">const</span> order = <span class="kw">await</span> w.<span class="fn">createOrder</span>();
+<span class="kw">const</span> link = <span class="kw">await</span> w.<span class="fn">sendToWhatsApp</span>(order);
+window.<span class="fn">open</span>(link, <span class="str">"_blank"</span>);</code></pre>
+        </div>
+      </section>
+
+      <!-- Quick Start with AI -->
+      <section id="quick-start-ai" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Empezar rápido con AI</h2>
+        <p class="text-neutral-500 text-sm mb-6">Genera una tienda completa pegando un prompt en ChatGPT, Claude, Cursor o cualquier agente de AI.</p>
+        <div class="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mb-6">
+          <p class="text-[13px] text-neutral-600"><strong>Paso 1:</strong> Descarga los archivos anteriores (whanda.min.js + whanda-plugins.min.js)</p>
+          <p class="text-[13px] text-neutral-600 mt-1"><strong>Paso 2:</strong> Copia el prompt de abajo y pégalo en tu agente de AI</p>
+        </div>
+        <div class="code-block rounded-lg p-4 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="cm">Usando whanda.min.js y whanda-plugins.min.js,</span>
+<span class="cm">crea una tienda de [TIPO] en un solo archivo HTML.</span>
+
+<span class="cm">IMPORTANTE:</span>
+<span class="cm">- Sin npm. Sin declaraciones import.</span>
+<span class="cm">- Copia whanda.min.js y whanda-plugins.min.js</span>
+<span class="cm">  al mismo directorio que el HTML.</span>
+
+<span class="cm">Flujo:</span> Catálogo → Carrito → WhatsApp → Cierre manual
+
+<span class="cm">Requisitos:</span>
+1. &lt;script src="whanda.min.js"&gt;
+2. new Whanda({ whatsappNumber: "NUM" })
+3. w.setProducts([...])
+4. await w.addItem(id)
+5. w.setCustomerName() / setCustomerAddress()
+6. const order = await w.createOrder()
+7. window.open(await w.sendToWhatsApp(order))
+8. Diseño responsivo con Tailwind CSS</code></pre>
+        </div>
+      </section>
+
+      <!-- Section helper -->
+      <section id="constructor" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Constructor</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">new Whanda(config?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Crear instancia</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Whanda</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3 font-mono">Config: { currency, locale, whatsappNumber, shipping, paymentMethods, deliveryMethods, currencies, regions, storeName }</p>
+      </section>
+
+      <section id="products" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Productos</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setProducts(products)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Reemplazar catálogo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getProducts(filter?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Productos con filtros</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getProduct(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Producto por ID</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getPrice(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Precio del producto</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getStock(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Stock del producto</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCategories()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Categorías únicas</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">search(query)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Buscar por nombre/categoría</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getRelatedProducts(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Productos relacionados</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getUpsells(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Upsells (más caros)</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCrossSells(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Cross-sells (complementarios)</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Filtros: { category, minPrice, maxPrice, search, sort, order, limit }</p>
+      </section>
+
+      <section id="cart" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Carrito</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCart()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Copia del carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">addItem(id, qty?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Agregar al carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;void&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">clearCart()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Vaciar carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">removeCartItem(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Eliminar artículo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">updateQuantity(id, qty)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Actualizar cantidad</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">hasCartItem(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Verificar si está en el carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">boolean</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCartItemCount()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Total de artículos</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="pricing" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Precios</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getSubtotal()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Subtotal del carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getShippingCost()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Envío calculado</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getDiscountAmount()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Monto del descuento</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getTotal()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Total (nunca negativo)</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">calculate()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Desglose completo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">formatPrice(amount)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Formatear con moneda</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="coupons" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Cupones</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">addCoupon(coupon)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Registrar cupón</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCoupons()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Todos los cupones</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">applyCoupon(code)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Aplicar cupón activo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">removeCoupon()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Eliminar cupón activo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">validateCoupon(code)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Verificar si existe</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">boolean</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getActiveCoupon()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Cupón activo o null</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="shipping" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Envío</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setFixedShipping(value)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Envío fijo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setFreeShippingFrom(n)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Gratis desde n</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setPerItemShipping(value)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Costo por artículo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getShippingCost()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Costo calculado</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">isFreeShipping()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> ¿Envío gratis?</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">boolean</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="customer" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Cliente</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setCustomerName(name)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Nombre del cliente</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setCustomerAddress(addr)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Dirección</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setCustomerNotes(notes)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Notas adicionales</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCustomer()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Copia de datos</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="checkout" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Checkout</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setPaymentMethod(m)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Establecer pago</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setDeliveryMethod(m)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Establecer entrega</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">validateCheckout()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Validar datos requeridos</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">true</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">createOrder(meta?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Crear pedido</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;Object&gt;</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="orders" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Pedidos</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getOrder(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Pedido por ID</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getLastOrder()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Último pedido</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">listOrders()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Todos los pedidos</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">updateOrderStatus(id, s)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Actualizar estado</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">cancelOrder(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Cancelar y eliminar</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Estados válidos: <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">pending</code>, <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">confirmed</code>, <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">shipped</code>, <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">delivered</code>, <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">cancelled</code></p>
+      </section>
+
+      <section id="whatsapp" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">WhatsApp</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setWhatsAppNumber(n)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Establecer número</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">sendToWhatsApp(order)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Generar enlace wa.me</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;string&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">generateMessage(order)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Generar mensaje</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;string&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">registerWhatsAppTemplate(id, fn)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Registrar plantilla</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getShareCatalogUrl(opts?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> URL para compartir catálogo</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getThankYouHtml(opts?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> HTML de página de agradecimiento</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="multi-currency" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Multi-Moneda</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setCurrency(code)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Establecer moneda activa</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCurrency()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Moneda activa</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getExchangeRate(code)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Tipo de cambio</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">convertPrice(basePrice)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Convertir precio</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { currencies: { USD: 1, DOP: 56.5, EUR: 0.92 } }</p>
+      </section>
+
+      <section id="multi-region" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Multi-Región</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setRegion(code)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Establecer región activa</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getRegion()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Región activa</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getTax(productId?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Tasa de impuesto</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">number</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getTaxName()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Nombre del impuesto</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { regions: { DO: { tax: { rate: 0.18, name: "ITBIS" }, shipping: { flat: 150, freeFrom: 2000 }, currency: "DOP" } } }</p>
+      </section>
+
+      <section id="hooks" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Hooks</h2>
+        <p class="text-[13px] text-neutral-500 mb-4">Usa <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">w.on("hook", fn)</code> para registrar y <code class="bg-neutral-100 px-1.5 py-0.5 rounded text-[11px] font-mono">w.off("hook", fn)</code> para cancelar la suscripción.</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Hook</th><th class="py-2.5 pr-4 font-medium text-[13px]">Datos</th><th class="py-2.5 font-medium text-[13px]">Se ejecuta cuando</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">beforeAddToCart</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">{ productId, quantity }</td><td class="py-2.5 text-neutral-400 text-[13px]">Antes de agregar artículo</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">afterAddToCart</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">cart items</td><td class="py-2.5 text-neutral-400 text-[13px]">Después de agregar artículo</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">afterCartChange</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">cart items</td><td class="py-2.5 text-neutral-400 text-[13px]">Después de cualquier cambio en el carrito</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">beforeCheckout</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">meta</td><td class="py-2.5 text-neutral-400 text-[13px]">Antes de crear pedido</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">afterCheckout</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">order</td><td class="py-2.5 text-neutral-400 text-[13px]">Después de crear pedido</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">beforeWhatsAppSend</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">order</td><td class="py-2.5 text-neutral-400 text-[13px]">Antes de generar enlace</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">onRemoveItem</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">{ productId, cart }</td><td class="py-2.5 text-neutral-400 text-[13px]">Al eliminar artículo del carrito</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">onCartEmpty</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[11px] font-mono">{ cart }</td><td class="py-2.5 text-neutral-400 text-[13px]">Al vaciar el carrito</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Los hooks pueden abortar retornando { abort: true, message: "..." }</p>
+      </section>
+
+      <section id="security" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Seguridad</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">_sanitizeString(str)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">int</span> Escapar entidades HTML</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">_sanitizeObject(obj)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">int</span> Sanitizar recursivamente</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3"><code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">_sanitizeString()</code> escapa <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">&lt; &gt; " ' &amp;</code> para prevenir XSS.</p>
+      </section>
+
+      <section id="scalability" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Escalabilidad</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">loadFromSources(sources)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">core</span> Cargar desde múltiples fuentes</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;Object[]&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">cacheProducts(ttl?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Almacenar en caché en localStorage</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getProductsPaginated(p, sz)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Productos paginados</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">createProductIterator(b?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Iterador de carga lazy</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="persistence" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-4">Persistencia</h2>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">save()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">int</span> Serializar a JSON</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">load(json)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium mr-1">int</span> Restaurar desde JSON</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">reset()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]"><span class="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded font-medium mr-1">conv</span> Limpiar estado</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Plugins -->
+      <section id="plugin-seasons" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Temporadas</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-plugins.min.js</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">createSeason(config)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Crear temporada</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getSeasons()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Todas las temporadas</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getActiveSeason()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Temporada activa por fecha</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">isInSeason(productId)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">¿En temporada?</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">boolean</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { id, name, start, end, type, discount, products, couponCode }</p>
+      </section>
+
+      <section id="plugin-urgency" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Urgencia</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-plugins.min.js</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setProductUrgency(id, cfg)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Establecer urgencia</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getUrgency(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Datos de urgencia</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getLowStockProducts()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Productos con bajo stock</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { lowStock, countdown, badge }</p>
+      </section>
+
+      <section id="plugin-bundles" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Paquetes</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-plugins.min.js</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">createBundle(config)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Crear paquete</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getBundles()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Todos los paquetes</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">addBundle(id, qty?)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Agregar paquete al carrito</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;void&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">deleteBundle(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Eliminar paquete</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { id, name, products, type, discount }. Products: ["id1", "id2"] o [{ productId: "id1", quantity: 1 }]</p>
+      </section>
+
+      <section id="plugin-downsells" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Downsells</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-plugins.min.js</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setDownsell(config)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Establecer downsell</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getDownsell()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Configuración actual</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object|null</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">clearDownsell()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Eliminar downsell</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { trigger, type, value, message, alternativeProductId }</p>
+      </section>
+
+      <section id="plugin-cro" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">CRO (Headless)</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-plugins.min.js</p>
+        <p class="text-[13px] text-neutral-500 mb-4">CRO es headless — provee datos, tú renderizas la interfaz.</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">setCRO(config)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Configurar CRO</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getCROData()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Todos los datos de CRO</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">trackProductView(id)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Rastrear vista de producto</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">void</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">getRecentlyViewed()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Vistos recientemente</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">checkFreeShippingProgress()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Progreso de envío gratis</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400 mt-3">Config: { freeShippingBar, freeShippingGoal, lowStockAlert, recentlyViewed, socialProof, exitIntent, exitMessage, exitDiscount }</p>
+      </section>
+
+      <section id="sheets" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Adaptador Google Sheets</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-sheets.js</p>
+        <div class="overflow-x-auto method-table mb-6">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Función</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">loadFromSheets(w, opts)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Cargar desde Sheets</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Promise&lt;Object[]&gt;</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">parseCSV(text)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Parsear CSV a productos</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">Object[]</td></tr>
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">buildGoogleSheetsCsvUrl(url)</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Convertir URL a exportación CSV</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-[11px] text-neutral-400">Opciones: <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">sheetUrl</code> (hoja pública) o <code class="bg-neutral-100 px-1 py-0.5 rounded font-mono">proxyUrl</code> (proxy serverless, recomendado para producción).</p>
+      </section>
+
+      <section id="extensions" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-2">Extensiones</h2>
+        <p class="text-[10px] text-purple-700 bg-purple-50 inline-block px-2 py-0.5 rounded font-medium mb-4">Requiere whanda-extensions.min.js</p>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2.5 pr-4 font-medium text-[13px]">Método</th><th class="py-2.5 pr-4 font-medium text-[13px]">Descripción</th><th class="py-2.5 font-medium text-[13px]">Retorna</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100">
+              <tr><td class="py-2.5 pr-4"><code class="bg-neutral-50 px-1.5 py-0.5 rounded text-[11px] font-mono">exportOrders()</code></td><td class="py-2.5 pr-4 text-neutral-500 text-[13px]">Exportar pedidos como CSV</td><td class="py-2.5 text-neutral-400 text-[11px] font-mono">string</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Error Codes -->
+      <section id="error-codes" class="px-6 sm:px-10 py-14 border-b border-neutral-100">
+        <h2 class="text-xl font-bold mb-6">Códigos de Error</h2>
+        <h3 class="text-sm font-semibold mb-3">Core</h3>
+        <div class="overflow-x-auto method-table mb-8">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2 pr-4 font-medium text-[13px]">Código</th><th class="py-2 font-medium text-[13px]">Mensaje</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100 text-[12px]">
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W001</td><td class="py-2 text-neutral-500">search() requiere un texto de búsqueda</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W002</td><td class="py-2 text-neutral-500">Producto no encontrado</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W003</td><td class="py-2 text-neutral-500">La cantidad debe ser un entero positivo</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W004</td><td class="py-2 text-neutral-500">Stock insuficiente</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W018</td><td class="py-2 text-neutral-500">El carrito está vacío</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W019</td><td class="py-2 text-neutral-500">El nombre del cliente es requerido</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W020</td><td class="py-2 text-neutral-500">La dirección del cliente es requerida</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W021</td><td class="py-2 text-neutral-500">El método de pago es requerido</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W022</td><td class="py-2 text-neutral-500">El método de entrega es requerido</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W025</td><td class="py-2 text-neutral-500">Número de WhatsApp no configurado</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W035</td><td class="py-2 text-neutral-500">setProducts() requiere un array</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W039</td><td class="py-2 text-neutral-500">Hook cancelado</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W040</td><td class="py-2 text-neutral-500">JSON inválido en load()</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3 class="text-sm font-semibold mb-3">Plugins</h3>
+        <div class="overflow-x-auto method-table">
+          <table class="w-full text-sm">
+            <thead><tr class="border-b border-neutral-200 text-left text-neutral-400"><th class="py-2 pr-4 font-medium text-[13px]">Código</th><th class="py-2 font-medium text-[13px]">Mensaje</th></tr></thead>
+            <tbody class="divide-y divide-neutral-100 text-[12px]">
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W100</td><td class="py-2 text-neutral-500">El paquete requiere id, name y products</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W101</td><td class="py-2 text-neutral-500">Paquete no encontrado</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W102</td><td class="py-2 text-neutral-500">La temporada requiere id, name, start y end</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W103</td><td class="py-2 text-neutral-500">El downsell requiere un descuento numérico positivo</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W104</td><td class="py-2 text-neutral-500">La urgencia requiere al menos uno de: lowStock, deadline o badge</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W105</td><td class="py-2 text-neutral-500">Las fechas de la temporada deben ser válidas</td></tr>
+              <tr><td class="py-2 pr-4 font-mono text-[11px]">W106</td><td class="py-2 text-neutral-500">Ya existe un elemento con ese ID</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="px-6 sm:px-10 py-8 border-t border-neutral-100">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <a href="index.html" class="flex items-center gap-2">
+            <img src="../logo.png" alt="Whanda" class="h-4 w-4 object-contain">
+            <span class="text-sm font-semibold">Whanda</span>
+          </a>
+          <div class="flex items-center gap-6 text-xs text-neutral-400">
+            <a href="index.html" class="hover:text-neutral-900 transition">Inicio</a>
+            <a href="examples.html" class="hover:text-neutral-900 transition">Ejemplos</a>
+            <a href="https://github.com/samueldlacruz/whanda" target="_blank" class="hover:text-neutral-900 transition">GitHub</a>
+          </div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.toc-link').forEach(l => l.classList.remove('active'));
+          const link = document.querySelector(`.toc-link[href="#${e.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -80% 0px' });
+    document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>

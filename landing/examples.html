@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examples — Whanda</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            purple: {
+              50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe',
+              400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 700: '#7e22ce',
+              800: '#6b21a8', 900: '#581c87'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .code-block { background: #09090b; }
+    .code-block code { color: #fafafa; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .code-block .kw { color: #c084fc; }
+    .code-block .str { color: #a78bfa; }
+    .code-block .num { color: #e879f9; }
+    .code-block .cm { color: #52525b; }
+    .code-block .fn { color: #f0abfc; }
+    .tab-active { color: #000; border-bottom-color: #9333ea; }
+    .example-panel { display: none; }
+    .example-panel.active { display: block; }
+  </style>
+</head>
+<body class="bg-white text-neutral-900 antialiased">
+
+  <!-- Nav -->
+  <nav class="fixed top-0 w-full bg-white/70 backdrop-blur-xl z-50 border-b border-neutral-100">
+    <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2.5">
+        <img src="logo.png" alt="Whanda" class="h-10 w-10 object-contain">
+        <span class="text-base font-semibold tracking-tight">Whanda</span>
+        <span class="text-neutral-300 font-normal mx-1">/</span>
+        <span class="text-neutral-400 font-normal text-sm">Examples</span>
+      </a>
+      <div class="hidden md:flex items-center gap-6 text-[13px] font-medium text-neutral-500">
+        <a href="index.html" class="hover:text-neutral-900 transition">Home</a>
+        <a href="docs.html" class="hover:text-neutral-900 transition">Docs</a>
+        <span class="text-neutral-200">|</span>
+        <a href="es/examples.html" class="hover:text-neutral-900 transition text-xs font-semibold border border-neutral-200 px-2 py-0.5 rounded">ES</a>
+        <a href="https://github.com/samueldlacruz/whanda" target="_blank" class="inline-flex items-center gap-1.5 bg-neutral-900 text-white px-3.5 py-1.5 rounded-lg hover:bg-neutral-800 transition text-xs">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="pt-24 pb-20 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <div class="mb-10">
+        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Examples</h1>
+        <p class="text-neutral-500 text-sm">Complete stores you can copy and adapt. Each example is a single HTML file.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex gap-0 border-b border-neutral-200 mb-10 overflow-x-auto">
+        <button onclick="showExample('accessories')" id="tab-accessories" class="tab-btn tab-active inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent whitespace-nowrap transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+          Accessories
+        </button>
+        <button onclick="showExample('bakery')" id="tab-bakery" class="tab-btn inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent text-neutral-400 hover:text-neutral-900 whitespace-nowrap transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 8.25v-1.5m-6 1.5v-1.5m12 9.75l-1.5.75a3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0 3.354 3.354 0 00-3 0 3.354 3.354 0 01-3 0L3 16.5m15-3.379a48.474 48.474 0 00-6-.371c-2.032 0-4.034.126-6 .371m12 0c.39.049.777.102 1.163.16 1.07.16 1.837 1.094 1.837 2.175v5.169c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 20.625v-5.17c0-1.08.768-2.014 1.837-2.174A47.78 47.78 0 016 13.12M12.265 3.11a.375.375 0 11-.53 0L12 2.845l.265.265zm-3 0a.375.375 0 11-.53 0L9 2.845l.265.265zm6 0a.375.375 0 11-.53 0L15 2.845l.265.265z"/></svg>
+          Bakery
+        </button>
+        <button onclick="showExample('clothing')" id="tab-clothing" class="tab-btn inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent text-neutral-400 hover:text-neutral-900 whitespace-nowrap transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+          Clothing
+        </button>
+        <button onclick="showExample('sheets')" id="tab-sheets" class="tab-btn inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent text-neutral-400 hover:text-neutral-900 whitespace-nowrap transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+          Google Sheets
+        </button>
+        <button onclick="showExample('aiprompt')" id="tab-aiprompt" class="tab-btn inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-medium border-b-2 border-transparent text-neutral-400 hover:text-neutral-900 whitespace-nowrap transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/></svg>
+          AI Prompt
+        </button>
+      </div>
+
+      <!-- Example 1: Accessories -->
+      <div id="example-accessories" class="example-panel active">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-2">Accessories Store</h2>
+          <p class="text-neutral-500 text-sm">Percentage coupon, stock urgency, fixed shipping, and related products.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">10% coupon</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Urgency</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Fixed shipping</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Related products</span>
+        </div>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code>&lt;script src=<span class="str">"whanda.min.js"</span>&gt;&lt;/script&gt;
+&lt;script src=<span class="str">"whanda-plugins.min.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="kw">const</span> accesorios = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"8095551234"</span> });
+
+  accesorios.<span class="fn">setProducts</span>([
+    { id: <span class="str">"a1"</span>, name: <span class="str">"Lentes de Sol"</span>, price: <span class="num">1500</span>, stock: <span class="num">20</span>, category: <span class="str">"Lentes"</span>, image: <span class="str">"lentes.jpg"</span> },
+    { id: <span class="str">"a2"</span>, name: <span class="str">"Reloj Clásico"</span>, price: <span class="num">3500</span>, stock: <span class="num">4</span>, category: <span class="str">"Relojes"</span>, image: <span class="str">"reloj.jpg"</span> },
+    { id: <span class="str">"a3"</span>, name: <span class="str">"Bolso Cuero"</span>, price: <span class="num">4200</span>, stock: <span class="num">8</span>, category: <span class="str">"Bolsos"</span>, image: <span class="str">"bolso.jpg"</span> },
+    { id: <span class="str">"a4"</span>, name: <span class="str">"Collar Plata"</span>, price: <span class="num">2800</span>, stock: <span class="num">15</span>, category: <span class="str">"Joyería"</span>, image: <span class="str">"collar.jpg"</span>,
+      relatedIds: [<span class="str">"a2"</span>] }
+  ]);
+
+  accesorios.<span class="fn">setFixedShipping</span>(<span class="num">200</span>);
+  accesorios.<span class="fn">setProductUrgency</span>(<span class="str">"a2"</span>, { lowStock: <span class="num">5</span>, badge: <span class="str">"¡Últimas unidades!"</span> });
+  accesorios.<span class="fn">addCoupon</span>({ code: <span class="str">"ACCESORIOS10"</span>, amount: <span class="num">10</span>, type: <span class="str">"percent"</span> });
+
+  <span class="kw">async function</span> <span class="fn">checkoutAccesorios</span>() {
+    <span class="kw">await</span> accesorios.<span class="fn">addItem</span>(<span class="str">"a1"</span>);
+    <span class="kw">await</span> accesorios.<span class="fn">addItem</span>(<span class="str">"a4"</span>);
+    accesorios.<span class="fn">applyCoupon</span>(<span class="str">"ACCESORIOS10"</span>);
+    accesorios.<span class="fn">setCustomerName</span>(<span class="str">"María López"</span>);
+    accesorios.<span class="fn">setCustomerAddress</span>(<span class="str">"Av. Principal #123, Santo Domingo"</span>);
+    accesorios.<span class="fn">setPaymentMethod</span>(<span class="str">"Efectivo"</span>);
+    accesorios.<span class="fn">setDeliveryMethod</span>(<span class="str">"Home Delivery"</span>);
+    <span class="kw">const</span> order = <span class="kw">await</span> accesorios.<span class="fn">createOrder</span>();
+    <span class="kw">const</span> link = <span class="kw">await</span> accesorios.<span class="fn">sendToWhatsApp</span>(order);
+    window.<span class="fn">open</span>(link, <span class="str">"_blank"</span>);
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 2: Bakery -->
+      <div id="example-bakery" class="example-panel">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-2">Bakery</h2>
+          <p class="text-neutral-500 text-sm">Free shipping threshold, coupon with minimum order, and Christmas season.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Free from $1000</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Coupon + min order</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Christmas season</span>
+        </div>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code>&lt;script src=<span class="str">"whanda.min.js"</span>&gt;&lt;/script&gt;
+&lt;script src=<span class="str">"whanda-plugins.min.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="kw">const</span> bakery = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"8095559999"</span> });
+
+  bakery.<span class="fn">setProducts</span>([
+    { id: <span class="str">"r1"</span>, name: <span class="str">"Torta de Chocolate"</span>, price: <span class="num">2500</span>, stock: <span class="num">5</span>, category: <span class="str">"Tortas"</span>, image: <span class="str">"torta.jpg"</span> },
+    { id: <span class="str">"r2"</span>, name: <span class="str">"Cupcakes (6 uds)"</span>, price: <span class="num">900</span>, stock: <span class="num">30</span>, category: <span class="str">"Pastelería"</span>, image: <span class="str">"cupcakes.jpg"</span> },
+    { id: <span class="str">"r3"</span>, name: <span class="str">"Galletas Artesanales"</span>, price: <span class="num">450</span>, stock: <span class="num">50</span>, category: <span class="str">"Galletas"</span>, image: <span class="str">"galletas.jpg"</span> },
+    { id: <span class="str">"r4"</span>, name: <span class="str">"Pan de Campo"</span>, price: <span class="num">350</span>, stock: <span class="num">20</span>, category: <span class="str">"Pan"</span>, image: <span class="str">"pan.jpg"</span> }
+  ]);
+
+  bakery.<span class="fn">setFreeShippingFrom</span>(<span class="num">1000</span>);
+  bakery.<span class="fn">addCoupon</span>({ code: <span class="str">"DULCE10"</span>, amount: <span class="num">10</span>, type: <span class="str">"percent"</span>, minOrder: <span class="num">500</span> });
+
+  bakery.<span class="fn">createSeason</span>({
+    id: <span class="str">"navidad-2024"</span>,
+    name: <span class="str">"Navidad 2024"</span>,
+    start: <span class="str">"2024-12-01"</span>,
+    end: <span class="str">"2024-12-31"</span>,
+    type: <span class="str">"promotion"</span>,
+    discount: <span class="num">15</span>
+  });
+
+  <span class="kw">async function</span> <span class="fn">checkoutBakery</span>() {
+    <span class="kw">await</span> bakery.<span class="fn">addItem</span>(<span class="str">"r1"</span>);
+    <span class="kw">await</span> bakery.<span class="fn">addItem</span>(<span class="str">"r2"</span>, <span class="num">2</span>);
+    bakery.<span class="fn">applyCoupon</span>(<span class="str">"DULCE10"</span>);
+    bakery.<span class="fn">setCustomerName</span>(<span class="str">"Carlos García"</span>);
+    bakery.<span class="fn">setCustomerAddress</span>(<span class="str">"Calle 5, Residencial Villa, #45"</span>);
+    bakery.<span class="fn">setPaymentMethod</span>(<span class="str">"Pago móvil"</span>);
+    bakery.<span class="fn">setDeliveryMethod</span>(<span class="str">"Home Delivery"</span>);
+    <span class="kw">const</span> order = <span class="kw">await</span> bakery.<span class="fn">createOrder</span>();
+    <span class="kw">const</span> link = <span class="kw">await</span> bakery.<span class="fn">sendToWhatsApp</span>(order);
+    window.<span class="fn">open</span>(link, <span class="str">"_blank"</span>);
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 3: Clothing -->
+      <div id="example-clothing" class="example-panel">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-2">Clothing Store</h2>
+          <p class="text-neutral-500 text-sm">Bundles, CRO data, urgency, upsells, cross-sells, per-item shipping, and capped coupon.</p>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Bundles</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">CRO Data</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Urgency</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Upsells</span>
+          <span class="bg-neutral-100 text-neutral-600 text-[11px] font-medium px-2.5 py-1 rounded-full">Capped coupon</span>
+        </div>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code>&lt;script src=<span class="str">"whanda.min.js"</span>&gt;&lt;/script&gt;
+&lt;script src=<span class="str">"whanda-plugins.min.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="kw">const</span> ropa = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"8095557777"</span> });
+
+  ropa.<span class="fn">setProducts</span>([
+    { id: <span class="str">"c1"</span>, name: <span class="str">"Camisa Blanca"</span>, price: <span class="num">1200</span>, stock: <span class="num">25</span>, category: <span class="str">"Camisas"</span>, image: <span class="str">"camisa.jpg"</span>,
+      relatedIds: [<span class="str">"c2"</span>, <span class="str">"c3"</span>], upsellIds: [<span class="str">"c4"</span>] },
+    { id: <span class="str">"c2"</span>, name: <span class="str">"Pantalón Negro"</span>, price: <span class="num">2500</span>, stock: <span class="num">15</span>, category: <span class="str">"Pantalones"</span>, image: <span class="str">"pantalon.jpg"</span>,
+      relatedIds: [<span class="str">"c1"</span>] },
+    { id: <span class="str">"c3"</span>, name: <span class="str">"Vestido Floral"</span>, price: <span class="num">3200</span>, stock: <span class="num">12</span>, category: <span class="str">"Vestidos"</span>, image: <span class="str">"vestido.jpg"</span> },
+    { id: <span class="str">"c4"</span>, name: <span class="str">"Chaqueta Denim"</span>, price: <span class="num">4500</span>, stock: <span class="num">8</span>, category: <span class="str">"Chaquetas"</span>, image: <span class="str">"chaqueta.jpg"</span>,
+      crossSellIds: [<span class="str">"c1"</span>, <span class="str">"c2"</span>] }
+  ]);
+
+  ropa.<span class="fn">setPerItemShipping</span>(<span class="num">50</span>);
+  ropa.<span class="fn">addCoupon</span>({ code: <span class="str">"MODA20"</span>, amount: <span class="num">20</span>, type: <span class="str">"percent"</span>, maxDiscount: <span class="num">1000</span> });
+
+  ropa.<span class="fn">createBundle</span>({
+    id: <span class="str">"combo-verano"</span>,
+    name: <span class="str">"Combo Camisa + Pantalón"</span>,
+    products: [<span class="str">"c1"</span>, <span class="str">"c2"</span>],
+    type: <span class="str">"percent"</span>,
+    discount: <span class="num">15</span>
+  });
+
+  ropa.<span class="fn">setCRO</span>({
+    freeShippingBar: <span class="kw">true</span>,
+    freeShippingGoal: <span class="num">3000</span>,
+    lowStockAlert: <span class="kw">true</span>,
+    recentlyViewed: <span class="kw">true</span>
+  });
+
+  ropa.<span class="fn">setProductUrgency</span>(<span class="str">"c4"</span>, { lowStock: <span class="num">3</span>, badge: <span class="str">"¡Solo quedan 8!"</span> });
+
+  <span class="kw">async function</span> <span class="fn">checkoutRopa</span>() {
+    <span class="kw">await</span> ropa.<span class="fn">addBundle</span>(<span class="str">"combo-verano"</span>);
+    <span class="kw">await</span> ropa.<span class="fn">addItem</span>(<span class="str">"c4"</span>);
+    ropa.<span class="fn">applyCoupon</span>(<span class="str">"MODA20"</span>);
+    ropa.<span class="fn">setCustomerName</span>(<span class="str">"Ana Martínez"</span>);
+    ropa.<span class="fn">setCustomerAddress</span>(<span class="str">"Urbanización Las Flores, #45"</span>);
+    ropa.<span class="fn">setPaymentMethod</span>(<span class="str">"Tarjeta"</span>);
+    ropa.<span class="fn">setDeliveryMethod</span>(<span class="str">"Home Delivery"</span>);
+    <span class="kw">const</span> order = <span class="kw">await</span> ropa.<span class="fn">createOrder</span>();
+    <span class="kw">const</span> link = <span class="kw">await</span> ropa.<span class="fn">sendToWhatsApp</span>(order);
+    window.<span class="fn">open</span>(link, <span class="str">"_blank"</span>);
+  }
+&lt;/script&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Example 4: Google Sheets -->
+      <div id="example-sheets" class="example-panel">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-2">Google Sheets as Database</h2>
+          <p class="text-neutral-500 text-sm">Load products from a Google Sheet without a backend. Includes CSV format and proxy options.</p>
+        </div>
+
+        <h3 class="text-sm font-semibold mb-3">CSV Format</h3>
+        <p class="text-[13px] text-neutral-500 mb-3">Required columns (first row):</p>
+        <div class="code-block rounded-lg p-4 mb-6 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="str">id,name,price,stock,category,image</span></code></pre>
+        </div>
+        <p class="text-[13px] text-neutral-500 mb-3">Optional columns:</p>
+        <div class="code-block rounded-lg p-4 mb-8 text-[13px] overflow-x-auto border border-neutral-800">
+          <pre><code><span class="str">relatedIds,upsellIds,crossSellIds</span></code></pre>
+        </div>
+
+        <h3 class="text-sm font-semibold mb-3">Option A — HTML (script tags)</h3>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 mb-8 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code>&lt;script src=<span class="str">"whanda.min.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="kw">const</span> w = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"1234567890"</span> });
+
+  <span class="fn">loadFromSheets</span>(w, {
+    sheetUrl: <span class="str">"https://docs.google.com/spreadsheets/d/SHEET_ID/edit?gid=0"</span>
+  }).<span class="fn">then</span>(() => {
+    console.<span class="fn">log</span>(w.<span class="fn">getProducts</span>());
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+
+        <h3 class="text-sm font-semibold mb-3">Option B — ES Module</h3>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 mb-8 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code><span class="kw">import</span> { Whanda } <span class="kw">from</span> <span class="str">"whanda"</span>;
+<span class="kw">import</span> { loadFromSheets } <span class="kw">from</span> <span class="str">"whanda/sheets"</span>;
+
+<span class="kw">const</span> w = <span class="kw">new</span> <span class="fn">Whanda</span>({ whatsappNumber: <span class="str">"1234567890"</span> });
+
+<span class="kw">await</span> <span class="fn">loadFromSheets</span>(w, {
+  sheetUrl: <span class="str">"https://docs.google.com/spreadsheets/d/SHEET_ID/edit?gid=0"</span>
+});
+
+console.<span class="fn">log</span>(w.<span class="fn">getProducts</span>());</code></pre>
+        </div>
+
+        <h3 class="text-sm font-semibold mb-3">With proxy (recommended for production)</h3>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 mb-4 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code><span class="kw">await</span> <span class="fn">loadFromSheets</span>(w, {
+  proxyUrl: <span class="str">"https://my-app.vercel.app/api/products"</span>
+});</code></pre>
+        </div>
+        <p class="text-[13px] text-neutral-500">The proxy must return CSV with content-type <code class="bg-neutral-100 px-1 py-0.5 rounded text-[11px] font-mono">text/csv</code>, or JSON with <code class="bg-neutral-100 px-1 py-0.5 rounded text-[11px] font-mono">{ csv: "..." }</code> or <code class="bg-neutral-100 px-1 py-0.5 rounded text-[11px] font-mono">{ products: [...] }</code>.</p>
+      </div>
+
+      <!-- Example 5: AI Prompt -->
+      <div id="example-aiprompt" class="example-panel">
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold mb-2">Generate Store with AI</h2>
+          <p class="text-neutral-500 text-sm">Copy this prompt and paste it into your favorite AI agent to generate a complete store in seconds.</p>
+        </div>
+        <div class="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mb-6">
+          <p class="text-[13px] text-neutral-600"><strong>Instruction:</strong> Copy the code below and paste it into ChatGPT, Claude, Cursor, Windsurf, or any AI agent.</p>
+        </div>
+        <div class="code-block rounded-xl p-6 border border-neutral-800 overflow-x-auto">
+          <pre class="text-[13px] leading-relaxed"><code><span class="cm">Using whanda.min.js and whanda-plugins.min.js,</span>
+<span class="cm">create a [TYPE] store in a single HTML file.</span>
+
+<span class="cm">IMPORTANT:</span>
+<span class="cm">- No npm. No import statements.</span>
+<span class="cm">- Copy whanda.min.js and whanda-plugins.min.js</span>
+<span class="cm">  to the same directory as the HTML.</span>
+
+<span class="cm">Flow:</span> Catalog → Cart → WhatsApp → Manual close
+
+<span class="cm">Requirements:</span>
+1. &lt;script src="whanda.min.js"&gt;
+2. new Whanda({ whatsappNumber: "NUM" })
+3. w.setProducts([...])
+4. await w.addItem(id)
+5. w.setCustomerName() / setCustomerAddress()
+6. const order = await w.createOrder()
+7. window.open(await w.sendToWhatsApp(order))
+8. Responsive design with Tailwind CSS
+
+<span class="cm">Files needed:</span>
+- whanda.min.js (core, ~26KB) — required
+- whanda-plugins.min.js (plugins, ~4KB) — optional</code></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="py-8 px-6 border-t border-neutral-100">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <img src="logo.png" alt="Whanda" class="h-4 w-4 object-contain">
+        <span class="text-sm font-semibold">Whanda</span>
+      </div>
+      <div class="flex items-center gap-6 text-xs text-neutral-400">
+        <a href="index.html" class="hover:text-neutral-900 transition">Home</a>
+        <a href="docs.html" class="hover:text-neutral-900 transition">Docs</a>
+        <a href="https://github.com/samueldlacruz/whanda" target="_blank" class="hover:text-neutral-900 transition">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function showExample(id) {
+      document.querySelectorAll('.example-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(t => {
+        t.classList.remove('tab-active');
+        t.classList.add('text-neutral-400');
+      });
+      document.getElementById('example-' + id).classList.add('active');
+      const tab = document.getElementById('tab-' + id);
+      tab.classList.add('tab-active');
+      tab.classList.remove('text-neutral-400');
+    }
+  </script>
+
+</body>
+</html>
